@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DISC Assessment Test - PT. TECHPACK ASIA</title>
+    <title>DISC Assessment Test - ALBEA INDONESIA</title>
     <!-- Include EmailJS SDK untuk Pengiriman Email Otomatis ke HR -->
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script type="text/javascript">
         (function() {
-            // Inisialisasi EmailJS (Ganti PUBLIC_KEY dengan milik akun EmailJS kamu jika ada)
-            emailjs.init("YOUR_PUBLIC_KEY");
+            // Inisialisasi EmailJS Public Key
+            // Masukkan Public Key akun EmailJS Anda di bawah jika ada, atau gunakan yang disiapkan
+            emailjs.init("YOUR_PUBLIC_KEY"); 
         })();
     </script>
     <style>
@@ -246,7 +247,7 @@
         </div>
 
         <div class="content">
-            <!-- Form Identitas Kandidat (Langsung Buka Tanpa Token) -->
+            <!-- Form Identitas Kandidat (Langsung Akses Tanpa Token) -->
             <div id="introScreen" class="intro-screen active">
                 <div class="disc-description">
                     <h3>SELAMAT DATANG DI TES DISC ASSESSMENT</h3>
@@ -295,19 +296,20 @@
                 </div>
             </div>
 
-            <!-- Results Section (Hanya Konfirmasi Selesai untuk Kandidat) -->
+            <!-- Results Section (Konfirmasi Selesai untuk Kandidat) -->
             <div id="results" class="result-container">
                 <div style="font-size: 4em; color: #2e7d32; margin-bottom: 10px;">✅</div>
                 <h2 style="margin-bottom: 15px; color: #333;">Tes DISC Telah Selesai!</h2>
                 <div class="disc-description" style="text-align: center;">
                     <p><strong>Terima kasih telah menyelesaikan tes DISC Assessment.</strong></p>
-                    <p>Jawaban Anda telah tersimpan dan terkirim secara langsung ke Tim HR untuk dievaluasi. Hasil bersifat rahasia dan hanya dapat diakses oleh tim Rekrutmen.</p>
+                    <p>Jawaban Anda telah tersimpan dan terkirim secara langsung ke email Tim HR untuk dievaluasi. Hasil bersifat rahasia dan hanya dapat diakses oleh tim Rekrutmen.</p>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
+        // Target Email HR Rekrutmen
         const HR_EMAIL = "fiscall.aditama@albea-group.com";
 
         // Data Soal 24 Kotak IML DISC Insights Analisa Sistem Kepribadian
@@ -661,10 +663,10 @@
                 completedAt: new Date().toISOString()
             };
 
-            // Kirim Email Otomatis ke HR
+            // Kirim Laporan ke Email HR
             sendEmailToHR(results);
 
-            // Tampilkan layar konfirmasi selesai
+            // Tampilkan Layar Konfirmasi Selesai
             showCompletionScreen();
         }
 
@@ -681,12 +683,13 @@
                 completed_at: new Date(results.completedAt).toLocaleString('id-ID')
             };
 
+            // Mengeksekusi EmailJS
             if (typeof emailjs !== 'undefined') {
                 emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', templateParams)
                     .then(function(response) {
-                        console.log('SUCCESS! Email sent to HR', response.status, response.text);
+                        console.log('BERHASIL! Laporan terkirim ke HR:', response.status, response.text);
                     }, function(error) {
-                        console.log('FAILED sending email...', error);
+                        console.log('GAGAL mengirim email...', error);
                     });
             }
         }
