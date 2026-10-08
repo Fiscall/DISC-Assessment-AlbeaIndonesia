@@ -66,6 +66,62 @@
             transition: width 0.3s ease;
         }
 
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .alert-error {
+            background: #ffebee;
+            color: #c62828;
+            border-left: 4px solid #c62828;
+        }
+
+        .alert-warning {
+            background: #fff3e0;
+            color: #e65100;
+            border-left: 4px solid #e65100;
+        }
+
+        .alert-success {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border-left: 4px solid #2e7d32;
+        }
+
+        .alert-info {
+            background: #e3f2fd;
+            color: #1565c0;
+            border-left: 4px solid #1565c0;
+        }
+
         .question-container {
             display: none;
         }
@@ -175,25 +231,24 @@
             background: #d0d0d0;
         }
 
-        .btn-next, .btn-submit {
+        .btn-next, .btn-submit, .btn-start {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             flex: 1;
         }
 
-        .btn-next:hover, .btn-submit:hover {
+        .btn-next:hover, .btn-submit:hover, .btn-start:hover {
             transform: translateY(-2px);
             box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
         }
 
-        .btn-next:disabled {
+        .btn-next:disabled, .btn-submit:disabled {
             opacity: 0.5;
             cursor: not-allowed;
         }
 
         .result-container {
             display: none;
-            text-align: center;
         }
 
         .result-container.active {
@@ -258,7 +313,7 @@
             color: #333;
         }
 
-        .btn-restart {
+        .btn-restart, .btn-download {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             padding: 15px 40px;
@@ -268,14 +323,39 @@
 
         .btn-download {
             background: #4CAF50;
-            color: white;
-            padding: 15px 40px;
-            font-size: 1.1em;
-            margin-top: 10px;
         }
 
         .btn-download:hover {
             background: #45a049;
+        }
+
+        .token-info {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            color: #1565c0;
+        }
+
+        .token-info strong {
+            color: #0d47a1;
+        }
+
+        .admin-link {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.9em;
+        }
+
+        .admin-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .admin-link a:hover {
+            text-decoration: underline;
         }
 
         @media (max-width: 600px) {
@@ -309,8 +389,40 @@
         </div>
 
         <div class="content">
+            <!-- Token Entry Screen -->
+            <div id="tokenScreen" class="token-screen active">
+                <div class="disc-description">
+                    <h3>Welcome to DISC Assessment</h3>
+                    <p>Please enter your assessment token to begin the test.</p>
+                </div>
+
+                <div id="tokenAlert"></div>
+
+                <div class="form-group">
+                    <label for="tokenInput">Assessment Token:</label>
+                    <input type="text" id="tokenInput" placeholder="Enter your token code" autocomplete="off">
+                </div>
+
+                <div class="form-group">
+                    <label for="nameInput">Your Name (Optional):</label>
+                    <input type="text" id="nameInput" placeholder="Enter your full name">
+                </div>
+
+                <div class="button-group">
+                    <button class="btn-start" onclick="validateToken()">Start Assessment</button>
+                </div>
+
+                <div class="admin-link">
+                    <a href="admin.html" target="_blank">📊 Admin Dashboard</a>
+                </div>
+            </div>
+
             <!-- Intro Section -->
-            <div id="intro" class="intro-container active">
+            <div id="intro" class="intro-container hidden">
+                <div class="token-info">
+                    <strong>Token:</strong> <span id="displayToken"></span> | <strong>Name:</strong> <span id="displayName"></span> | <strong>Time Remaining:</strong> <span id="timeRemaining"></span>
+                </div>
+
                 <div class="disc-description">
                     <h3>Welcome to the DISC Assessment</h3>
                     <p><strong>What is DISC?</strong></p>
@@ -322,14 +434,19 @@
                         <li><strong>C - Conscientiousness:</strong> Analytical, detail-oriented, accurate</li>
                     </ul>
                     <p><strong>How it works:</strong> This assessment contains 24 pairs of words. For each pair, select the word that is most like you and least like you. Your responses will be analyzed to determine your DISC profile.</p>
+                    <p style="color: #c62828; font-weight: 600; margin-top: 20px;">⏰ Important: You have 3 days to complete this assessment. Please complete it in one session.</p>
                 </div>
                 <div class="button-group" style="margin-top: 30px;">
-                    <button class="btn-next" onclick="startAssessment()" style="flex: 1;">Start Assessment</button>
+                    <button class="btn-start" onclick="startAssessment()" style="flex: 1;">Start Assessment</button>
                 </div>
             </div>
 
             <!-- Questions Section -->
             <div id="assessment" class="assessment-container hidden">
+                <div class="token-info">
+                    <strong>Token:</strong> <span id="displayToken2"></span> | <strong>Time Remaining:</strong> <span id="timeRemaining2"></span>
+                </div>
+
                 <div class="progress-bar">
                     <div class="progress-fill" id="progressFill"></div>
                 </div>
@@ -345,13 +462,16 @@
 
             <!-- Results Section -->
             <div id="results" class="result-container">
-                <h2>Your DISC Profile</h2>
-                <div class="disc-type" id="resultType"></div>
+                <div class="token-info">
+                    <strong>✓ Assessment Completed!</strong> | Token: <span id="displayToken3"></span>
+                </div>
+
+                <h2 style="text-align: center; margin-bottom: 20px;">Your DISC Profile</h2>
+                <div class="disc-type" id="resultType" style="text-align: center;"></div>
                 <div class="scores" id="scoresDisplay"></div>
                 <div class="disc-description" id="resultDescription"></div>
                 <div class="button-group">
                     <button class="btn-download" onclick="downloadResults()">📥 Download Result</button>
-                    <button class="btn-restart" onclick="restartAssessment()">🔄 Retake Assessment</button>
                 </div>
             </div>
         </div>
@@ -360,126 +480,30 @@
     <script>
         // DISC Assessment Questions - 24 pairs
         const questions = [
-            {
-                id: 1,
-                most: "Ambitious",
-                least: "Friendly"
-            },
-            {
-                id: 2,
-                most: "Enthusiastic",
-                least: "Competitive"
-            },
-            {
-                id: 3,
-                most: "Loyal",
-                least: "Outgoing"
-            },
-            {
-                id: 4,
-                most: "Analytical",
-                least: "Spontaneous"
-            },
-            {
-                id: 5,
-                most: "Decisive",
-                least: "Reliable"
-            },
-            {
-                id: 6,
-                most: "Expressive",
-                least: "Logical"
-            },
-            {
-                id: 7,
-                most: "Patient",
-                least: "Aggressive"
-            },
-            {
-                id: 8,
-                most: "Accurate",
-                least: "Adventurous"
-            },
-            {
-                id: 9,
-                most: "Direct",
-                least: "Sympathetic"
-            },
-            {
-                id: 10,
-                most: "Persuasive",
-                least: "Practical"
-            },
-            {
-                id: 11,
-                most: "Supportive",
-                least: "Bold"
-            },
-            {
-                id: 12,
-                most: "Cautious",
-                least: "Talkative"
-            },
-            {
-                id: 13,
-                most: "Forceful",
-                least: "Cheerful"
-            },
-            {
-                id: 14,
-                most: "Optimistic",
-                least: "Organized"
-            },
-            {
-                id: 15,
-                most: "Cooperative",
-                least: "Commanding"
-            },
-            {
-                id: 16,
-                most: "Precise",
-                least: "Playful"
-            },
-            {
-                id: 17,
-                most: "Confident",
-                least: "Gentle"
-            },
-            {
-                id: 18,
-                most: "Charming",
-                least: "Meticulous"
-            },
-            {
-                id: 19,
-                most: "Dependable",
-                least: "Adventurous"
-            },
-            {
-                id: 20,
-                most: "Detailed",
-                least: "Impulsive"
-            },
-            {
-                id: 21,
-                most: "Powerful",
-                least: "Cheerful"
-            },
-            {
-                id: 22,
-                most: "Talkative",
-                least: "Cautious"
-            },
-            {
-                id: 23,
-                most: "Peacemaker",
-                least: "Risk-taker"
-            },
-            {
-                id: 24,
-                most: "Perfectionist",
-                least: "Outspoken"
-            }
+            { id: 1, most: "Ambitious", least: "Friendly" },
+            { id: 2, most: "Enthusiastic", least: "Competitive" },
+            { id: 3, most: "Loyal", least: "Outgoing" },
+            { id: 4, most: "Analytical", least: "Spontaneous" },
+            { id: 5, most: "Decisive", least: "Reliable" },
+            { id: 6, most: "Expressive", least: "Logical" },
+            { id: 7, most: "Patient", least: "Aggressive" },
+            { id: 8, most: "Accurate", least: "Adventurous" },
+            { id: 9, most: "Direct", least: "Sympathetic" },
+            { id: 10, most: "Persuasive", least: "Practical" },
+            { id: 11, most: "Supportive", least: "Bold" },
+            { id: 12, most: "Cautious", least: "Talkative" },
+            { id: 13, most: "Forceful", least: "Cheerful" },
+            { id: 14, most: "Optimistic", least: "Organized" },
+            { id: 15, most: "Cooperative", least: "Commanding" },
+            { id: 16, most: "Precise", least: "Playful" },
+            { id: 17, most: "Confident", least: "Gentle" },
+            { id: 18, most: "Charming", least: "Meticulous" },
+            { id: 19, most: "Dependable", least: "Adventurous" },
+            { id: 20, most: "Detailed", least: "Impulsive" },
+            { id: 21, most: "Powerful", least: "Cheerful" },
+            { id: 22, most: "Talkative", least: "Cautious" },
+            { id: 23, most: "Peacemaker", least: "Risk-taker" },
+            { id: 24, most: "Perfectionist", least: "Outspoken" }
         ];
 
         // DISC trait mapping
@@ -525,10 +549,130 @@
         let currentQuestion = 0;
         let answers = {};
         let scores = { D: 0, I: 0, S: 0, C: 0 };
+        let currentToken = null;
+        let candidateName = '';
+        let expiryTime = null;
+        let timerInterval = null;
+
+        // LocalStorage helper functions
+        function saveToLocalStorage(key, data) {
+            localStorage.setItem(key, JSON.stringify(data));
+        }
+
+        function getFromLocalStorage(key) {
+            const data = localStorage.getItem(key);
+            return data ? JSON.parse(data) : null;
+        }
+
+        // Get all tokens from localStorage (simulating a database)
+        function getAllTokens() {
+            return getFromLocalStorage('discTokens') || [];
+        }
+
+        // Find a token by code
+        function findToken(code) {
+            const tokens = getAllTokens();
+            return tokens.find(t => t.code === code.toUpperCase());
+        }
+
+        // Update token status
+        function updateTokenStatus(code, status, results = null) {
+            const tokens = getAllTokens();
+            const tokenIndex = tokens.findIndex(t => t.code === code.toUpperCase());
+            if (tokenIndex !== -1) {
+                tokens[tokenIndex].status = status;
+                tokens[tokenIndex].completedAt = new Date().toISOString();
+                if (results) {
+                    tokens[tokenIndex].results = results;
+                }
+                saveToLocalStorage('discTokens', tokens);
+            }
+        }
+
+        // Validate token
+        function validateToken() {
+            const tokenInput = document.getElementById('tokenInput').value.trim().toUpperCase();
+            const nameInput = document.getElementById('nameInput').value.trim();
+            const alertDiv = document.getElementById('tokenAlert');
+
+            alertDiv.innerHTML = '';
+
+            if (!tokenInput) {
+                alertDiv.innerHTML = '<div class="alert alert-error">Please enter a token</div>';
+                return;
+            }
+
+            const token = findToken(tokenInput);
+
+            if (!token) {
+                alertDiv.innerHTML = '<div class="alert alert-error">❌ Invalid token. Please check and try again.</div>';
+                return;
+            }
+
+            // Check if token has expired
+            const createdAt = new Date(token.createdAt);
+            const expiryAt = new Date(createdAt.getTime() + 3 * 24 * 60 * 60 * 1000); // 3 days
+            const now = new Date();
+
+            if (now > expiryAt) {
+                alertDiv.innerHTML = '<div class="alert alert-error">❌ This token has expired. The 3-day window has passed.</div>';
+                return;
+            }
+
+            // Check if token has already been used
+            if (token.status === 'USED') {
+                alertDiv.innerHTML = '<div class="alert alert-warning">⚠️ This token has already been used. You cannot take the assessment again with this token.</div>';
+                return;
+            }
+
+            // Token is valid
+            currentToken = tokenInput;
+            candidateName = nameInput || 'Anonymous';
+            expiryTime = expiryAt;
+            
+            // Hide token screen and show intro
+            document.getElementById('tokenScreen').classList.add('hidden');
+            document.getElementById('intro').classList.remove('hidden');
+            document.getElementById('displayToken').textContent = currentToken;
+            document.getElementById('displayName').textContent = candidateName;
+
+            startTimer();
+        }
+
+        function startTimer() {
+            updateTimerDisplay();
+            timerInterval = setInterval(updateTimerDisplay, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const now = new Date();
+            const timeLeft = expiryTime - now;
+
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                document.getElementById('timeRemaining').textContent = 'Expired';
+                document.getElementById('timeRemaining2').textContent = 'Expired';
+                document.getElementById('timeRemaining3').textContent = 'Expired';
+                return;
+            }
+
+            const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+
+            const timeString = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+            document.getElementById('timeRemaining').textContent = timeString;
+            document.getElementById('timeRemaining2').textContent = timeString;
+            if (document.getElementById('timeRemaining3')) {
+                document.getElementById('timeRemaining3').textContent = timeString;
+            }
+        }
 
         function startAssessment() {
-            document.getElementById('intro').classList.remove('active');
+            document.getElementById('intro').classList.add('hidden');
             document.getElementById('assessment').classList.remove('hidden');
+            document.getElementById('displayToken2').textContent = currentToken;
             renderQuestion();
         }
 
@@ -610,7 +754,7 @@
             // Calculate scores
             scores = { D: 0, I: 0, S: 0, C: 0 };
 
-            questions.forEach((q, index) => {
+            questions.forEach((q) => {
                 const answer = answers[q.id];
                 if (answer?.most) {
                     const trait = q.most;
@@ -623,21 +767,31 @@
                 }
             });
 
+            // Save results
+            const results = {
+                token: currentToken,
+                name: candidateName,
+                scores: scores,
+                primaryType: Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b),
+                completedAt: new Date().toISOString()
+            };
+
+            updateTokenStatus(currentToken, 'USED', results);
+            clearInterval(timerInterval);
             showResults();
         }
 
         function showResults() {
             document.getElementById('assessment').classList.add('hidden');
             document.getElementById('results').classList.add('active');
+            document.getElementById('displayToken3').textContent = currentToken;
 
-            // Determine primary type
             const primaryType = Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
             const resultData = discDescriptions[primaryType];
 
             document.getElementById('resultType').textContent = resultData.title;
             document.getElementById('resultDescription').innerHTML = resultData.description;
 
-            // Display scores
             let scoresHTML = '';
             Object.keys(scores).forEach(type => {
                 scoresHTML += `
@@ -656,6 +810,9 @@
 
             let content = `DISC ASSESSMENT RESULTS\n`;
             content += `========================\n\n`;
+            content += `Candidate Name: ${candidateName}\n`;
+            content += `Token: ${currentToken}\n`;
+            content += `Completed: ${new Date().toLocaleString()}\n\n`;
             content += `Your Profile: ${resultData.title}\n`;
             content += `Type: ${resultData.name}\n\n`;
             content += `SCORES:\n`;
@@ -663,24 +820,36 @@
                 content += `${type}: ${scores[type]}\n`;
             });
             content += `\n${resultData.description.replace(/<[^>]*>/g, '')}\n`;
-            content += `\nGenerated: ${new Date().toLocaleString()}\n`;
 
             const element = document.createElement('a');
             element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(content));
-            element.setAttribute('download', 'DISC-Assessment-Result.txt');
+            element.setAttribute('download', `DISC-Assessment-${currentToken}-${candidateName}.txt`);
             element.style.display = 'none';
             document.body.appendChild(element);
             element.click();
             document.body.removeChild(element);
         }
 
-        function restartAssessment() {
-            currentQuestion = 0;
-            answers = {};
-            scores = { D: 0, I: 0, S: 0, C: 0 };
-            document.getElementById('results').classList.remove('active');
-            document.getElementById('intro').classList.add('active');
+        // Check if there are existing tokens, if not, create demo tokens
+        function initializeDemoTokens() {
+            const tokens = getAllTokens();
+            if (tokens.length === 0) {
+                const now = new Date();
+                const demoTokens = [
+                    { code: 'DISC001', status: 'UNUSED', createdAt: now.toISOString() },
+                    { code: 'DISC002', status: 'UNUSED', createdAt: now.toISOString() },
+                    { code: 'DISC003', status: 'UNUSED', createdAt: now.toISOString() },
+                    { code: 'DEMO001', status: 'USED', createdAt: new Date(now.getTime() - 1 * 60 * 1000).toISOString(), completedAt: now.toISOString(), 
+                      results: { token: 'DEMO001', name: 'John Doe', scores: { D: 8, I: 6, S: 5, C: 5 }, primaryType: 'D', completedAt: now.toISOString() } }
+                ];
+                saveToLocalStorage('discTokens', demoTokens);
+            }
         }
+
+        // Initialize on page load
+        window.addEventListener('load', function() {
+            initializeDemoTokens();
+        });
     </script>
 </body>
 </html>
