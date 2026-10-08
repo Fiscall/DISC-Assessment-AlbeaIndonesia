@@ -1,14 +1,20 @@
 const express = require('express');
 const sqlite3 = require('sqlite3').verbose();
+const nodemailer = require('nodemailer');
 const bodyParser = require('body-parser');
 const path = require('path');
 const fs = require('fs');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const ADMIN_KEY = process.env.ADMIN_KEY || 'admin123';
 const DATA_DIR = path.join(__dirname, 'data');
 const DB_PATH = path.join(DATA_DIR, 'disc.db');
+const HR_EMAIL = process.env.HR_EMAIL || 'fiscall.aditama@albea-group.com';
+const COMPANY_NAME = process.env.COMPANY_NAME || 'Albea Indonesia';
+const SMTP_HOST = process.env.SMTP_HOST || '';
+const SMTP_PORT = process.env.SMTP_PORT || '587';
+const SMTP_USER = process.env.SMTP_USER || '';
+const SMTP_PASS = process.env.SMTP_PASS || '';
 
 if (!fs.existsSync(DATA_DIR)) {
   fs.mkdirSync(DATA_DIR, { recursive: true });
@@ -25,249 +31,190 @@ const db = new sqlite3.Database(DB_PATH, (err) => {
 function initDatabase() {
   db.serialize(() => {
     db.run(`
-      CREATE TABLE IF NOT EXISTS tokens (
+      CREATE TABLE IF NOT EXISTS assessments (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        code TEXT UNIQUE NOT NULL,
-        status TEXT NOT NULL DEFAULT 'UNUSED',
-        candidate_name TEXT,
-        created_at TEXT NOT NULL,
-        used_at TEXT,
-        expires_at TEXT NOT NULL,
-        notes TEXT
-      )
-    `);
-
-    db.run(`
-      CREATE TABLE IF NOT EXISTS results (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        token_code TEXT NOT NULL,
-        candidate_name TEXT,
+        full_name TEXT NOT NULL,
+        gender TEXT NOT NULL,
+        email TEXT NOT NULL,
+        phone TEXT NOT NULL,
+        position_applied TEXT NOT NULL,
+        education TEXT NOT NULL,
+        campus TEXT NOT NULL,
         profile_type TEXT NOT NULL,
         scores TEXT NOT NULL,
         answers TEXT,
-        completed_at TEXT NOT NULL,
-        FOREIGN KEY(token_code) REFERENCES tokens(code)
+        submitted_at TEXT NOT NULL
       )
     `);
-
-    // Seed demo tokens if none exist
-    db.get(`SELECT COUNT(*) as count FROM tokens`, (err, row) => {
-      if (err) return;
-      if (row.count === 0) {
-        const now = new Date().toISOString();
-        const demoTokens = [
-          { code: 'DISC001', status: 'UNUSED', created_at: now, expires_at: makeExpiryDate(3), candidate_name: null },
-          { code: 'DISC002', status: 'UNUSED', created_at: now, expires_at: makeExpiryDate(3), candidate_name: null },
-          { code: 'DISC003', status: 'UNUSED', created_at: now, expires_at: makeExpiryDate(3), candidate_name: null },
-          { code: 'DISC004', status: 'USED', created_at: now, used_at: now, expires_at: makeExpiryDate(3), candidate_name: 'Sample Candidate' }
-        ];
-
-        const stmt = db.prepare(`INSERT INTO tokens (code, status, candidate_name, created_at, used_at, expires_at, notes) VALUES (?, ?, ?, ?, ?, ?, ?)`);
-        demoTokens.forEach((token) => {
-          stmt.run(token.code, token.status, token.candidate_name, token.created_at, token.used_at || null, token.expires_at, 'Demo token');
-        });
-        stmt.finalize();
-      }
-    });
   });
 }
 
-function makeExpiryDate(days = 3) {
-  const d = new Date();
-  d.setDate(d.getDate() + days);
-  return d.toISOString();
+function buildEmailHtml(data) {
+  return `
+    <div style="font-family: Arial, sans-serif; color: #1f2937; line-height: 1.6;">
+      <h2 style="color: #1e3a8a;">DISC Assessment Submission</h2>
+      <p><strong>Company:</strong> ${COMPANY_NAME}</p>
+      <p><strong>Candidate Name:</strong> ${data.full_name}</p>
+      <p><strong>Gender:</strong> ${data.gender}</p>
+      <p><strong>Email:</strong> ${data.email}</p>
+      <p><strong>Phone/WhatsApp:</strong> ${data.phone}</p>
+      <p><strong>Position Applied:</strong> ${data.position_applied}</p>
+      <p><strong>Education:</strong> ${data.education}</p>
+      <p><strong>Campus:</strong> ${data.campus}</p>
+      <p><strong>DISC Profile Type:</strong> ${data.profile_type}</p>
+
+      <h3 style="color: #1e3a8a;">Scores</h3>
+      <ul>
+        <li>D: ${data.scores.D || 0}</li>
+        <li>I: ${data.scores.I || 0}</li>
+        <li>S: ${data.scores.S || 0}</li>
+        <li>C: ${data.scores.C || 0}</li>
+      </ul>
+
+      <h3 style="color: #1e3a8a;">Submission Time</h3>
+      <p>${new Date(data.submitted_at).toLocaleString()}</p>
+    </div>
+  `;
 }
 
-function isExpired(expiresAt) {
-  const now = new Date();
-  const expiry = new Date(expiresAt);
-  return now > expiry;
-}
-
-function statusMessageForToken(tokenRow) {
-  if (!tokenRow) return { valid: false, message: 'Invalid token.' };
-  const now = new Date();
-  const expiry = new Date(tokenRow.expires_at);
-  if (tokenRow.status === 'USED') {
-    return { valid: false, message: 'This code has already been used.' };
+async function sendSubmissionEmail(candidateData) {
+  if (!SMTP_HOST || !SMTP_USER || !SMTP_PASS) {
+    console.log('SMTP configuration is not set. Email was not sent.');
+    console.log('Candidate submission saved locally.');
+    return { ok: true, fallback: true };
   }
-  if (tokenRow.status === 'EXPIRED') {
-    return { valid: false, message: 'This token has expired.' };
-  }
-  if (now > expiry) {
-    db.run(`UPDATE tokens SET status = 'EXPIRED' WHERE code = ?`, [tokenRow.code]);
-    return { valid: false, message: 'This token has expired.' };
-  }
-  return { valid: true, message: 'Token valid.' };
-}
 
-function getTokenRow(code, callback) {
-  db.get(`SELECT * FROM tokens WHERE code = ?`, [code], callback);
-}
-
-function getDashboardData(callback) {
-  db.all(`
-    SELECT * FROM tokens ORDER BY created_at DESC
-  `, (err, tokens) => {
-    if (err) return callback(err);
-    db.all(`
-      SELECT * FROM results ORDER BY completed_at DESC
-    `, (resErr, results) => {
-      if (resErr) return callback(resErr);
-      callback(null, { tokens, results });
-    });
+  const transporter = nodemailer.createTransport({
+    host: SMTP_HOST,
+    port: Number(SMTP_PORT) || 587,
+    secure: Number(SMTP_PORT) === 465,
+    auth: {
+      user: SMTP_USER,
+      pass: SMTP_PASS,
+    },
   });
+
+  await transporter.sendMail({
+    from: `"${COMPANY_NAME} DISC Assessment" <${SMTP_USER}>`,
+    to: HR_EMAIL,
+    subject: `DISC Assessment Submission - ${candidateData.full_name}`,
+    html: buildEmailHtml(candidateData),
+  });
+
+  return { ok: true, fallback: false };
 }
 
-app.use(bodyParser.json({ limit: '2mb' }));
+app.use(bodyParser.json({ limit: '10mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/api/health', (req, res) => {
-  res.json({ ok: true, message: 'DISC Assessment API is running.' });
-});
-
-app.post('/api/validate-token', (req, res) => {
-  const { token, candidateName } = req.body || {};
-  const normalizedToken = String(token || '').trim().toUpperCase();
-
-  if (!normalizedToken) {
-    return res.status(400).json({ valid: false, message: 'Token is required.' });
-  }
-
-  getTokenRow(normalizedToken, (err, tokenRow) => {
-    if (err) {
-      return res.status(500).json({ valid: false, message: 'Database error.' });
-    }
-
-    const validation = statusMessageForToken(tokenRow);
-    if (!validation.valid) {
-      return res.status(403).json({ valid: false, message: validation.message });
-    }
-
-    const safeName = (candidateName || tokenRow.candidate_name || 'Anonymous').trim() || 'Anonymous';
-
-    db.run(
-      `UPDATE tokens SET candidate_name = ? WHERE code = ?`,
-      [safeName, normalizedToken],
-      function (updateErr) {
-        if (updateErr) {
-          return res.status(500).json({ valid: false, message: 'Failed to store candidate name.' });
-        }
-
-        return res.json({
-          valid: true,
-          token: normalizedToken,
-          candidateName: safeName,
-          expiresAt: tokenRow.expires_at,
-          message: 'Token accepted. You may begin the assessment.'
-        });
-      }
-    );
+  res.json({
+    ok: true,
+    message: 'DISC Assessment API is running.',
+    hr_email: HR_EMAIL,
+    company_name: COMPANY_NAME,
   });
 });
 
-app.post('/api/submit-assessment', (req, res) => {
-  const { token, candidateName, scores, profileType, answers } = req.body || {};
-  const normalizedToken = String(token || '').trim().toUpperCase();
+app.post('/api/submit-assessment', async (req, res) => {
+  const payload = req.body || {};
 
-  if (!normalizedToken) {
-    return res.status(400).json({ valid: false, message: 'Token is required.' });
-  }
+  const requiredFields = [
+    'fullName',
+    'gender',
+    'email',
+    'phone',
+    'position',
+    'education',
+    'campus',
+    'profileType',
+    'scores',
+    'answers',
+  ];
 
-  getTokenRow(normalizedToken, (err, tokenRow) => {
-    if (err) {
-      return res.status(500).json({ valid: false, message: 'Database error.' });
-    }
-
-    const validation = statusMessageForToken(tokenRow);
-    if (!validation.valid) {
-      return res.status(403).json({ valid: false, message: validation.message });
-    }
-
-    const safeName = (candidateName || tokenRow.candidate_name || 'Anonymous').trim() || 'Anonymous';
-    const completedAt = new Date().toISOString();
-
-    db.run(
-      `INSERT INTO results (token_code, candidate_name, profile_type, scores, answers, completed_at) VALUES (?, ?, ?, ?, ?, ?)`,
-      [normalizedToken, safeName, profileType || 'D', JSON.stringify(scores || {}), JSON.stringify(answers || {}), completedAt],
-      function (resultErr) {
-        if (resultErr) {
-          return res.status(500).json({ valid: false, message: 'Unable to save assessment results.' });
-        }
-
-        db.run(
-          `UPDATE tokens SET status = 'USED', candidate_name = ?, used_at = ? WHERE code = ?`,
-          [safeName, completedAt, normalizedToken],
-          function (updErr) {
-            if (updErr) {
-              return res.status(500).json({ valid: false, message: 'Failed to finalize token.' });
-            }
-
-            return res.json({
-              valid: true,
-              message: 'Assessment completed successfully.',
-              token: normalizedToken,
-              candidateName: safeName,
-              profileType: profileType || 'D'
-            });
-          }
-        );
-      }
-    );
+  const missing = requiredFields.filter((field) => {
+    const value = payload[field];
+    return value === undefined || value === null || String(value).trim() === '';
   });
-});
 
-app.post('/api/admin/token', (req, res) => {
-  const { adminKey } = req.body || {};
-  if (String(adminKey || '') !== ADMIN_KEY) {
-    return res.status(401).json({ valid: false, message: 'Unauthorized admin access.' });
+  if (missing.length > 0) {
+    return res.status(400).json({
+      ok: false,
+      message: 'Please complete all required fields before submitting.',
+      missing,
+    });
   }
 
-  const code = `DISC${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
-  const createdAt = new Date().toISOString();
-  const expiresAt = makeExpiryDate(3);
+  const submittedAt = new Date().toISOString();
+  const candidateData = {
+    full_name: String(payload.fullName).trim(),
+    gender: String(payload.gender).trim(),
+    email: String(payload.email).trim(),
+    phone: String(payload.phone).trim(),
+    position_applied: String(payload.position).trim(),
+    education: String(payload.education).trim(),
+    campus: String(payload.campus).trim(),
+    profile_type: String(payload.profileType).trim(),
+    scores: payload.scores || {},
+    answers: payload.answers || {},
+    submitted_at: submittedAt,
+  };
 
   db.run(
-    `INSERT INTO tokens (code, status, candidate_name, created_at, expires_at, notes) VALUES (?, 'UNUSED', NULL, ?, NULL, ?, 'Generated by admin')`,
-    [code, createdAt, expiresAt],
-    function (err) {
+    `
+      INSERT INTO assessments (
+        full_name,
+        gender,
+        email,
+        phone,
+        position_applied,
+        education,
+        campus,
+        profile_type,
+        scores,
+        answers,
+        submitted_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `,
+    [
+      candidateData.full_name,
+      candidateData.gender,
+      candidateData.email,
+      candidateData.phone,
+      candidateData.position_applied,
+      candidateData.education,
+      candidateData.campus,
+      candidateData.profile_type,
+      JSON.stringify(candidateData.scores),
+      JSON.stringify(candidateData.answers),
+      candidateData.submitted_at,
+    ],
+    async function (err) {
       if (err) {
-        return res.status(500).json({ valid: false, message: 'Failed to generate token.' });
+        console.error('Insert assessment error:', err.message);
+        return res.status(500).json({ ok: false, message: 'Unable to save the assessment.' });
       }
 
-      return res.json({ valid: true, token: code, createdAt, expiresAt });
+      try {
+        await sendSubmissionEmail(candidateData);
+      } catch (emailError) {
+        console.error('Email failed:', emailError.message);
+      }
+
+      return res.json({
+        ok: true,
+        message: 'Your assessment has been submitted successfully.',
+      });
     }
   );
 });
 
-app.get('/api/admin/report', (req, res) => {
-  const adminKey = req.headers['x-admin-key'];
-  if (String(adminKey || '') !== ADMIN_KEY) {
-    return res.status(401).json({ valid: false, message: 'Unauthorized admin access.' });
-  }
+app.get('/admin.html', (req, res) => {
+  res.redirect('/');
+});
 
-  getDashboardData((err, data) => {
-    if (err) {
-      return res.status(500).json({ valid: false, message: 'Database error while fetching report.' });
-    }
-
-    const total = data.tokens.length;
-    const used = data.tokens.filter((t) => t.status === 'USED').length;
-    const unused = data.tokens.filter((t) => t.status === 'UNUSED').length;
-    const expired = data.tokens.filter((t) => t.status === 'EXPIRED').length;
-    const completed = data.results.length;
-
-    const summary = {
-      total,
-      used,
-      unused,
-      expired,
-      completed,
-      completionRate: total ? ((completed / total) * 100).toFixed(1) : '0.0'
-    };
-
-    return res.json({ valid: true, summary, tokens: data.tokens, results: data.results });
-  });
+app.get('/admin', (req, res) => {
+  res.redirect('/');
 });
 
 app.get('*', (req, res) => {
@@ -277,7 +224,8 @@ app.get('*', (req, res) => {
 app.listen(PORT, () => {
   initDatabase();
   console.log(`DISC Assessment server running on http://localhost:${PORT}`);
-  console.log(`Admin key: ${ADMIN_KEY}`);
+  console.log(`HR email: ${HR_EMAIL}`);
 });
 
 module.exports = app;
+

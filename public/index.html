@@ -3,31 +3,32 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>DISC Assessment</title>
+  <title>DISC Assessment | Albea Indonesia</title>
   <style>
     :root {
-      --primary: #4f46e5;
-      --primary-dark: #3730a3;
+      --primary: #1e3a8a;
+      --primary-dark: #172554;
       --panel-bg: #ffffff;
       --bg: linear-gradient(135deg, #eef2ff, #f8fafc);
       --text: #1f2937;
       --muted: #6b7280;
       --danger: #b91c1c;
       --success: #166534;
-      --warning: #b45309;
       --border: #e5e7eb;
+      --info: #dbeafe;
     }
 
     * { box-sizing: border-box; }
+
     body {
-      font-family: Arial, sans-serif;
       margin: 0;
+      font-family: Arial, sans-serif;
       background: var(--bg);
       color: var(--text);
     }
 
     .container {
-      max-width: 960px;
+      max-width: 980px;
       margin: 40px auto;
       background: var(--panel-bg);
       border-radius: 18px;
@@ -84,12 +85,18 @@
     }
 
     .alert.info {
-      background: #dbeafe;
+      background: var(--info);
       color: #1d4ed8;
       border: 1px solid #bfdbfe;
     }
 
-    .form-group {
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(220px, 1fr));
+      gap: 18px;
+    }
+
+    .field {
       margin-bottom: 18px;
     }
 
@@ -99,7 +106,7 @@
       font-weight: 700;
     }
 
-    input[type="text"] {
+    input, select {
       width: 100%;
       padding: 12px 14px;
       border-radius: 10px;
@@ -107,8 +114,8 @@
       font-size: 1rem;
     }
 
-    input[type="text"]:focus {
-      outline: 2px solid rgba(79, 70, 229, 0.2);
+    input:focus, select:focus {
+      outline: 2px solid rgba(30, 58, 138, 0.15);
       border-color: var(--primary);
     }
 
@@ -120,12 +127,12 @@
       cursor: pointer;
       transition: all 0.2s ease;
       font-weight: 700;
+      width: 100%;
     }
 
     .primary-btn {
       background: linear-gradient(135deg, var(--primary), var(--primary-dark));
       color: white;
-      width: 100%;
     }
 
     .secondary-btn {
@@ -135,33 +142,6 @@
 
     button:hover {
       transform: translateY(-1px);
-    }
-
-    .nav-row {
-      display: flex;
-      gap: 12px;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      margin-top: 20px;
-    }
-
-    .hidden {
-      display: none !important;
-    }
-
-    .token-box {
-      display: flex;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 10px;
-      background: #eef2ff;
-      border: 1px solid #c7d2fe;
-      color: #312e81;
-      padding: 12px 14px;
-      border-radius: 10px;
-      margin-bottom: 18px;
-      font-size: 0.95rem;
     }
 
     .question-block {
@@ -174,22 +154,22 @@
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(8px); }
+      from { opacity: 0; transform: translateY(6px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
     .question-number {
-      font-size: 0.8rem;
-      letter-spacing: 0.04em;
       color: var(--primary);
       font-weight: 700;
       margin-bottom: 12px;
+      letter-spacing: 0.04em;
+      font-size: 0.8rem;
     }
 
     .question-text {
       font-size: 1.35rem;
       font-weight: 700;
-      margin-bottom: 16px;
+      margin-bottom: 18px;
     }
 
     .options {
@@ -200,90 +180,80 @@
     .option {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
       padding: 14px 16px;
-      border: 1px solid var(--border);
       border-radius: 10px;
+      border: 1px solid var(--border);
       background: white;
     }
 
     .option input {
       width: 18px;
       height: 18px;
+      margin: 0;
     }
 
     .option label {
       display: block;
       width: 100%;
       cursor: pointer;
+      margin: 0;
       font-weight: 600;
     }
 
     .progress-bar {
       width: 100%;
       height: 10px;
-      background: #e5e7eb;
       border-radius: 999px;
+      background: #e5e7eb;
       overflow: hidden;
-      margin-bottom: 24px;
+      margin-bottom: 18px;
     }
 
     .progress-fill {
+      width: 0%;
       height: 100%;
-      width: 0;
       background: linear-gradient(135deg, var(--primary), var(--primary-dark));
       transition: width 0.2s ease;
     }
 
-    .result-box {
-      text-align: center;
-    }
-
-    .profile-type {
-      font-size: 2.3rem;
-      font-weight: 800;
-      color: var(--primary-dark);
-      margin: 18px 0;
-    }
-
-    .score-grid {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(120px, 1fr));
+    .nav-row {
+      display: flex;
       gap: 12px;
-      margin: 20px 0;
+      margin-top: 20px;
     }
 
-    .score-box {
-      background: #f8fafc;
-      border: 1px solid var(--border);
+    .nav-row button {
+      width: auto;
+      flex: 1;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .done-box {
+      text-align: center;
+      padding: 30px 20px;
+      background: #ecfdf5;
+      border: 1px solid #bbf7d0;
       border-radius: 12px;
-      padding: 16px;
     }
 
-    .score-box h4 {
-      margin: 0 0 10px;
-      color: var(--primary);
-      font-size: 1.2rem;
+    .done-box h2 {
+      color: #166534;
+      margin-top: 0;
     }
 
-    .score-box .value {
-      font-size: 2rem;
-      font-weight: 800;
-      color: var(--text);
-    }
-
-    .admin-link {
-      display: inline-block;
-      margin-top: 12px;
-      color: var(--primary);
-      text-decoration: none;
-      font-weight: 700;
-    }
-
-    @media (max-width: 700px) {
-      .score-grid {
-        grid-template-columns: repeat(2, minmax(120px, 1fr));
+    @media (max-width: 720px) {
+      .form-grid {
+        grid-template-columns: 1fr;
       }
+
+      .nav-row {
+        flex-direction: column;
+      }
+
       .container {
         margin: 20px 12px;
       }
@@ -294,74 +264,79 @@
   <div class="container">
     <div class="header">
       <h1>DISC Assessment</h1>
-      <p>Behavioral style evaluation</p>
+      <p>Albea Indonesia</p>
     </div>
 
     <div class="content">
-      <div id="tokenScreen">
+      <div id="formScreen">
         <div class="panel">
-          <h3>Access your assessment</h3>
-          <p>Enter the assessment token provided to you. No login is required.</p>
-          <div id="tokenMessage" class="alert info">You must provide a valid, unused token to begin.</div>
+          <div id="formMessage" class="alert info">Please complete your personal information before starting the DISC assessment.</div>
 
-          <div class="form-group">
-            <label for="tokenInput">Assessment Token</label>
-            <input id="tokenInput" type="text" placeholder="Example: DISC123ABC" />
+          <div class="form-grid">
+            <div class="field">
+              <label for="fullName">Nama Lengkap</label>
+              <input id="fullName" type="text" placeholder="Masukkan nama lengkap" />
+            </div>
+
+            <div class="field">
+              <label for="gender">Jenis Kelamin</label>
+              <select id="gender">
+                <option value="">Pilih jenis kelamin</option>
+                <option value="Laki-laki">Laki-laki</option>
+                <option value="Perempuan">Perempuan</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="email">Alamat Email</label>
+              <input id="email" type="email" placeholder="contoh@email.com" />
+            </div>
+
+            <div class="field">
+              <label for="phone">Nomor WA / Telepon</label>
+              <input id="phone" type="text" placeholder="08xxxxxxxxxx" />
+            </div>
+
+            <div class="field">
+              <label for="position">Posisi yang Akan Dilamar</label>
+              <input id="position" type="text" placeholder="Contoh: Front End Developer" />
+            </div>
+
+            <div class="field">
+              <label for="education">Pendidikan (Jurusan)</label>
+              <input id="education" type="text" placeholder="Contoh: Teknik Informatika" />
+            </div>
+
+            <div class="field" style="grid-column: 1 / -1;">
+              <label for="campus">Kampus</label>
+              <input id="campus" type="text" placeholder="Nama kampus / universitas" />
+            </div>
           </div>
 
-          <div class="form-group">
-            <label for="candidateNameInput">Candidate Name (Optional)</label>
-            <input id="candidateNameInput" type="text" placeholder="Enter your name" />
+          <div style="margin-top: 16px;">
+            <button id="startAssessmentBtn" class="primary-btn">Lanjut ke Assessment</button>
           </div>
-
-          <button class="primary-btn" id="startBtn">Validate Token & Start</button>
-          <a class="admin-link" href="/admin.html" target="_blank">Admin dashboard</a>
-        </div>
-      </div>
-
-      <div id="introScreen" class="hidden">
-        <div class="token-box">
-          <span><strong>Token:</strong> <span id="displayToken"></span></span>
-          <span><strong>Name:</strong> <span id="displayName"></span></span>
-          <span><strong>Expires in:</strong> <span id="expireCountdown">--</span></span>
-        </div>
-
-        <div class="panel">
-          <h3>Welcome to the DISC Assessment</h3>
-          <p>This assessment contains 24 questions. For each item, choose the word that is most like you and least like you.</p>
-          <p><strong>Important:</strong> Only a valid, unused token may be used. If the test is not completed within 3 days, the token will expire.</p>
-          <button class="primary-btn" id="beginBtn">Start Assessment</button>
         </div>
       </div>
 
       <div id="assessmentScreen" class="hidden">
-        <div class="token-box">
-          <span><strong>Token:</strong> <span id="assessmentToken"></span></span>
-          <span><strong>Time remaining:</strong> <span id="timeRemaining">--</span></span>
-        </div>
-
         <div class="progress-bar">
-          <div class="progress-fill" id="progressFill"></div>
+          <div id="progressFill" class="progress-fill"></div>
         </div>
 
         <div id="questionContainer"></div>
 
         <div class="nav-row">
-          <button class="secondary-btn" id="prevBtn">Previous</button>
-          <button class="primary-btn" id="nextBtn">Next</button>
-          <button class="primary-btn hidden" id="submitBtn">Submit</button>
+          <button id="prevBtn" class="secondary-btn">Sebelumnya</button>
+          <button id="nextBtn" class="primary-btn">Berikutnya</button>
+          <button id="submitBtn" class="primary-btn hidden">Submit</button>
         </div>
       </div>
 
-      <div id="resultScreen" class="hidden">
-        <div class="panel result-box">
-          <h2>Your DISC Profile</h2>
-          <div class="profile-type" id="profileType">D</div>
-          <div id="resultSummary"></div>
-
-          <div class="score-grid" id="scoreGrid"></div>
-
-          <button class="primary-btn" id="downloadBtn">Download Results</button>
+      <div id="doneScreen" class="hidden">
+        <div class="panel done-box">
+          <h2>Assessment Berhasil Dikirim</h2>
+          <p>Terima kasih. Data Anda telah berhasil dikirim ke tim HR Albea Indonesia.</p>
         </div>
       </div>
     </div>
@@ -406,269 +381,170 @@
       Perfectionist: 'C', Outspoken: 'D'
     };
 
-    const profileDescriptions = {
-      D: {
-        title: 'The Achiever',
-        description: 'Direct, decisive, and focused on results. You lead with confidence and action.'
-      },
-      I: {
-        title: 'The Influencer',
-        description: 'Outgoing, optimistic, and social. You motivate people and bring energy to teams.'
-      },
-      S: {
-        title: 'The Supporter',
-        description: 'Reliable, patient, and collaborative. You create stability and trust in group settings.'
-      },
-      C: {
-        title: 'The Analyzer',
-        description: 'Thoughtful, accurate, and detail-oriented. You think carefully before deciding.'
-      }
-    };
-
-    let candidateToken = '';
-    let candidateName = 'Anonymous';
-    let expiresAt = null;
-    let currentQuestionIndex = 0;
+    let currentIndex = 0;
     let answers = {};
-    let scores = { D: 0, I: 0, S: 0, C: 0 };
-    let expiryTimer = null;
+    let formData = {};
 
-    const tokenInput = document.getElementById('tokenInput');
-    const candidateNameInput = document.getElementById('candidateNameInput');
-    const tokenMessage = document.getElementById('tokenMessage');
-    const startBtn = document.getElementById('startBtn');
-    const beginBtn = document.getElementById('beginBtn');
-    const prevBtn = document.getElementById('prevBtn');
-    const nextBtn = document.getElementById('nextBtn');
-    const submitBtn = document.getElementById('submitBtn');
-    const questionContainer = document.getElementById('questionContainer');
-    const progressFill = document.getElementById('progressFill');
-
-    function showMessage(type, text) {
-      tokenMessage.className = `alert ${type}`;
-      tokenMessage.textContent = text;
+    function setFormMessage(type, text) {
+      const el = document.getElementById('formMessage');
+      el.className = `alert ${type}`;
+      el.textContent = text;
     }
 
-    async function validateToken() {
-      const token = (tokenInput.value || '').trim().toUpperCase();
-      const name = (candidateNameInput.value || '').trim() || 'Anonymous';
+    function validateForm() {
+      const fullName = document.getElementById('fullName').value.trim();
+      const gender = document.getElementById('gender').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const position = document.getElementById('position').value.trim();
+      const education = document.getElementById('education').value.trim();
+      const campus = document.getElementById('campus').value.trim();
 
-      if (!token) {
-        showMessage('error', 'Please enter a token.');
-        return;
+      if (!fullName || !gender || !email || !phone || !position || !education || !campus) {
+        setFormMessage('error', 'Semua data diri wajib diisi sebelum memulai assessment.');
+        return false;
       }
 
-      try {
-        const response = await fetch('/api/validate-token', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ token, candidateName: name })
-        });
-
-        const data = await response.json();
-        if (!response.ok || !data.valid) {
-          showMessage('error', data.message || 'Token validation failed.');
-          return;
-        }
-
-        candidateToken = data.token;
-        candidateName = data.candidateName;
-        expiresAt = new Date(data.expiresAt);
-
-        document.getElementById('displayToken').textContent = candidateToken;
-        document.getElementById('displayName').textContent = candidateName;
-        document.getElementById('assessmentToken').textContent = candidateToken;
-        document.getElementById('tokenScreen').classList.add('hidden');
-        document.getElementById('introScreen').classList.remove('hidden');
-        updateExpiryCounter();
-        startExpiryTimer();
-        showMessage('success', 'Token accepted. You may begin the assessment.');
-      } catch (error) {
-        showMessage('error', 'Unable to validate token. Please try again.');
-      }
-    }
-
-    function updateExpiryCounter() {
-      if (!expiresAt) return;
-      const diff = expiresAt - new Date();
-      if (diff <= 0) {
-        document.getElementById('expireCountdown').textContent = 'Expired';
-        document.getElementById('timeRemaining').textContent = 'Expired';
-        return;
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailPattern.test(email)) {
+        setFormMessage('error', 'Alamat email tidak valid.');
+        return false;
       }
 
-      const totalSeconds = Math.floor(diff / 1000);
-      const d = Math.floor(totalSeconds / 86400);
-      const h = Math.floor((totalSeconds % 86400) / 3600);
-      const m = Math.floor((totalSeconds % 3600) / 60);
-      const s = totalSeconds % 60;
+      if (phone.length < 8) {
+        setFormMessage('error', 'Nomor WA / telepon minimal 8 digit.');
+        return false;
+      }
 
-      const text = `${d}d ${h}h ${m}m ${s}s`;
-      document.getElementById('expireCountdown').textContent = text;
-      document.getElementById('timeRemaining').textContent = text;
+      formData = { fullName, gender, email, phone, position, education, campus };
+      setFormMessage('success', 'Data diri berhasil diterima. Anda dapat melanjutkan ke assessment.');
+      return true;
     }
 
-    function startExpiryTimer() {
-      clearInterval(expiryTimer);
-      expiryTimer = setInterval(updateExpiryCounter, 1000);
-    }
+    function startAssessment() {
+      if (!validateForm()) return;
 
-    function beginAssessment() {
-      document.getElementById('introScreen').classList.add('hidden');
+      document.getElementById('formScreen').classList.add('hidden');
       document.getElementById('assessmentScreen').classList.remove('hidden');
+      currentIndex = 0;
       renderQuestion();
     }
 
     function renderQuestion() {
-      const currentQuestion = questions[currentQuestionIndex];
-      questionContainer.innerHTML = `
-        <div class="question-block active">
-          <div class="question-number">Question ${currentQuestionIndex + 1} of ${questions.length}</div>
-          <div class="question-text">Select the word that is MOST like you and the one LEAST like you.</div>
+      const q = questions[currentIndex];
+      const percentage = ((currentIndex + 1) / questions.length) * 100;
+      document.getElementById('progressFill').style.width = `${percentage}%`;
+
+      document.getElementById('questionContainer').innerHTML = `
+        <div class="panel question-block active">
+          <div class="question-number">Pertanyaan ${currentIndex + 1} dari ${questions.length}</div>
+          <div class="question-text">Pilih jawaban yang paling sesuai dengan diri Anda.</div>
+
           <div class="options">
             <div class="option">
-              <input type="radio" id="most-${currentQuestion.id}" name="q-${currentQuestion.id}" value="most" ${answers[currentQuestion.id] === 'most' ? 'checked' : ''} />
-              <label for="most-${currentQuestion.id}"><strong>MOST like me:</strong> ${currentQuestion.most}</label>
+              <input type="radio" id="most-${q.id}" name="q-${q.id}" value="most" ${answers[q.id] === 'most' ? 'checked' : ''} />
+              <label for="most-${q.id}"><strong>Most like me:</strong> ${q.most}</label>
             </div>
+
             <div class="option">
-              <input type="radio" id="least-${currentQuestion.id}" name="q-${currentQuestion.id}" value="least" ${answers[currentQuestion.id] === 'least' ? 'checked' : ''} />
-              <label for="least-${currentQuestion.id}"><strong>LEAST like me:</strong> ${currentQuestion.least}</label>
+              <input type="radio" id="least-${q.id}" name="q-${q.id}" value="least" ${answers[q.id] === 'least' ? 'checked' : ''} />
+              <label for="least-${q.id}"><strong>Least like me:</strong> ${q.least}</label>
             </div>
           </div>
         </div>
       `;
 
-      const percent = ((currentQuestionIndex + 1) / questions.length) * 100;
-      progressFill.style.width = percent + '%';
-
-      const selected = answers[currentQuestion.id];
-      nextBtn.classList.toggle('hidden', currentQuestionIndex === questions.length - 1);
-      submitBtn.classList.toggle('hidden', currentQuestionIndex !== questions.length - 1);
-      prevBtn.style.visibility = currentQuestionIndex === 0 ? 'hidden' : 'visible';
-
-      if (!selected) {
-        nextBtn.disabled = true;
-        submitBtn.disabled = true;
-      } else {
-        nextBtn.disabled = false;
-        submitBtn.disabled = false;
-      }
-
-      bindOptionEvents();
-    }
-
-    function bindOptionEvents() {
       document.querySelectorAll('input[type="radio"]').forEach((radio) => {
         radio.addEventListener('change', (event) => {
-          const target = event.target;
-          const name = target.name;
-          const questionId = Number(name.replace('q-', ''));
-          answers[questionId] = target.value;
-          renderQuestion();
+          const qid = Number(event.target.name.replace('q-', ''));
+          answers[qid] = event.target.value;
         });
       });
+
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+      const submitBtn = document.getElementById('submitBtn');
+
+      prevBtn.style.visibility = currentIndex === 0 ? 'hidden' : 'visible';
+      nextBtn.classList.toggle('hidden', currentIndex === questions.length - 1);
+      submitBtn.classList.toggle('hidden', currentIndex !== questions.length - 1);
     }
 
-    function nextQuestion() {
-      if (currentQuestionIndex < questions.length - 1) {
-        currentQuestionIndex += 1;
+    function prevQuestion() {
+      if (currentIndex > 0) {
+        currentIndex -= 1;
         renderQuestion();
       }
     }
 
-    function prevQuestion() {
-      if (currentQuestionIndex > 0) {
-        currentQuestionIndex -= 1;
+    function nextQuestion() {
+      if (currentIndex < questions.length - 1) {
+        currentIndex += 1;
         renderQuestion();
       }
     }
 
     function calculateScores() {
-      scores = { D: 0, I: 0, S: 0, C: 0 };
+      const score = { D: 0, I: 0, S: 0, C: 0 };
+
       questions.forEach((q) => {
         const selected = answers[q.id];
         if (!selected) return;
 
         const trait = selected === 'most' ? q.most : q.least;
         const type = traitMap[trait];
-        if (type) scores[type] += 1;
+        if (type) score[type] += 1;
       });
-      return scores;
+
+      return score;
+    }
+
+    function getProfileType(scores) {
+      const highest = Object.entries(scores).sort((a, b) => b[1] - a[1])[0];
+      return highest ? highest[0] : 'D';
     }
 
     async function submitAssessment() {
-      const finalScores = calculateScores();
-      const primary = Object.keys(finalScores).sort((a, b) => finalScores[b] - finalScores[a])[0];
+      const scores = calculateScores();
+      const profileType = getProfileType(scores);
+
+      const payload = {
+        fullName: formData.fullName,
+        gender: formData.gender,
+        email: formData.email,
+        phone: formData.phone,
+        position: formData.position,
+        education: formData.education,
+        campus: formData.campus,
+        scores,
+        profileType,
+        answers
+      };
 
       try {
         const response = await fetch('/api/submit-assessment', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            token: candidateToken,
-            candidateName,
-            scores: finalScores,
-            profileType: primary,
-            answers: answers
-          })
+          body: JSON.stringify(payload)
         });
 
         const data = await response.json();
-        if (!response.ok || !data.valid) {
-          showMessage('error', data.message || 'Assessment could not be submitted.');
+        if (!response.ok || !data.ok) {
+          setFormMessage('error', data.message || 'Gagal mengirim assessment.');
           return;
         }
 
         document.getElementById('assessmentScreen').classList.add('hidden');
-        document.getElementById('resultScreen').classList.remove('hidden');
-
-        const summary = profileDescriptions[primary];
-        document.getElementById('profileType').textContent = primary;
-        document.getElementById('resultSummary').innerHTML = `
-          <h3>${summary.title}</h3>
-          <p>${summary.description}</p>
-        `;
-
-        const scoreGrid = document.getElementById('scoreGrid');
-        scoreGrid.innerHTML = '';
-        Object.entries(finalScores).forEach(([type, value]) => {
-          const box = document.createElement('div');
-          box.className = 'score-box';
-          box.innerHTML = `<h4>${type}</h4><div class="value">${value}</div>`;
-          scoreGrid.appendChild(box);
-        });
-
-        document.getElementById('downloadBtn').onclick = () => {
-          const text = [
-            'DISC ASSESSMENT REPORT',
-            '--------------------',
-            `Candidate: ${candidateName}`,
-            `Token: ${candidateToken}`,
-            `Type: ${primary}`,
-            `Description: ${summary.description}`,
-            '',
-            'Scores:',
-            ...Object.entries(finalScores).map(([type, value]) => `${type}: ${value}`)
-          ].join('\n');
-
-          const blob = new Blob([text], { type: 'text/plain' });
-          const url = URL.createObjectURL(blob);
-          const link = document.createElement('a');
-          link.href = url;
-          link.download = `disc-report-${candidateToken}.txt`;
-          link.click();
-          URL.revokeObjectURL(url);
-        };
+        document.getElementById('doneScreen').classList.remove('hidden');
       } catch (error) {
-        showMessage('error', 'Unable to submit assessment. Please try again.');
+        setFormMessage('error', 'Terjadi kesalahan saat mengirim assessment. Silakan coba lagi.');
       }
     }
 
-    startBtn.addEventListener('click', validateToken);
-    beginBtn.addEventListener('click', beginAssessment);
-    prevBtn.addEventListener('click', prevQuestion);
-    nextBtn.addEventListener('click', nextQuestion);
-    submitBtn.addEventListener('click', submitAssessment);
+    document.getElementById('startAssessmentBtn').addEventListener('click', startAssessment);
+    document.getElementById('prevBtn').addEventListener('click', prevQuestion);
+    document.getElementById('nextBtn').addEventListener('click', nextQuestion);
+    document.getElementById('submitBtn').addEventListener('click', submitAssessment);
   </script>
 </body>
 </html>
