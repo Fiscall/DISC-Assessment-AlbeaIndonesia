@@ -4,6 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DISC Assessment Test</title>
+    <!-- Include EmailJS SDK untuk Pengiriman Email Otomatis -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script type="text/javascript">
+        (function() {
+            // Inisialisasi EmailJS (Ganti PUBLIC_KEY dengan milik akun EmailJS kamu jika ada)
+            emailjs.init("YOUR_PUBLIC_KEY");
+        })();
+    </script>
     <style>
         * {
             margin: 0;
@@ -110,18 +118,6 @@
             border-left: 4px solid #e65100;
         }
 
-        .alert-success {
-            background: #e8f5e9;
-            color: #2e7d32;
-            border-left: 4px solid #2e7d32;
-        }
-
-        .alert-info {
-            background: #e3f2fd;
-            color: #1565c0;
-            border-left: 4px solid #1565c0;
-        }
-
         .question-container {
             display: none;
         }
@@ -200,11 +196,6 @@
             color: #333;
         }
 
-        .option input[type="radio"]:checked + label {
-            color: #667eea;
-            font-weight: 600;
-        }
-
         .button-group {
             display: flex;
             gap: 15px;
@@ -227,19 +218,10 @@
             color: #333;
         }
 
-        .btn-prev:hover {
-            background: #d0d0d0;
-        }
-
         .btn-next, .btn-submit, .btn-start {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             flex: 1;
-        }
-
-        .btn-next:hover, .btn-submit:hover, .btn-start:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
         }
 
         .btn-next:disabled, .btn-submit:disabled {
@@ -249,22 +231,13 @@
 
         .result-container {
             display: none;
+            text-align: center;
+            padding: 30px 10px;
         }
 
         .result-container.active {
             display: block;
             animation: fadeIn 0.5s ease;
-        }
-
-        .disc-type {
-            display: inline-block;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 20px 40px;
-            border-radius: 10px;
-            font-size: 2.5em;
-            font-weight: bold;
-            margin: 30px 0;
         }
 
         .disc-description {
@@ -275,60 +248,6 @@
             text-align: left;
         }
 
-        .disc-description h3 {
-            color: #667eea;
-            margin-bottom: 10px;
-            font-size: 1.3em;
-        }
-
-        .disc-description p {
-            color: #555;
-            line-height: 1.6;
-            margin-bottom: 15px;
-        }
-
-        .scores {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
-            margin: 30px 0;
-        }
-
-        .score-box {
-            background: #f5f5f5;
-            padding: 20px;
-            border-radius: 10px;
-            border-left: 4px solid #667eea;
-        }
-
-        .score-box h4 {
-            color: #667eea;
-            margin-bottom: 10px;
-            font-size: 1.2em;
-        }
-
-        .score-value {
-            font-size: 2em;
-            font-weight: bold;
-            color: #333;
-        }
-
-        .btn-restart, .btn-download {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 15px 40px;
-            font-size: 1.1em;
-            margin-top: 20px;
-        }
-
-        .btn-download {
-            background: #4CAF50;
-        }
-
-        .btn-download:hover {
-            background: #45a049;
-        }
-
         .token-info {
             background: #e3f2fd;
             padding: 15px;
@@ -336,10 +255,6 @@
             margin-bottom: 20px;
             font-size: 0.9em;
             color: #1565c0;
-        }
-
-        .token-info strong {
-            color: #0d47a1;
         }
 
         .admin-link {
@@ -354,28 +269,6 @@
             font-weight: 600;
         }
 
-        .admin-link a:hover {
-            text-decoration: underline;
-        }
-
-        @media (max-width: 600px) {
-            .scores {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .header h1 {
-                font-size: 1.8em;
-            }
-
-            .disc-type {
-                font-size: 1.8em;
-            }
-
-            .button-group {
-                flex-direction: column;
-            }
-        }
-
         .hidden {
             display: none;
         }
@@ -385,7 +278,7 @@
     <div class="container">
         <div class="header">
             <h1>🎯 DISC Assessment</h1>
-            <p>Discover Your Personality Type</p>
+            <p>Personality Assessment Platform</p>
         </div>
 
         <div class="content">
@@ -425,16 +318,8 @@
 
                 <div class="disc-description">
                     <h3>Welcome to the DISC Assessment</h3>
-                    <p><strong>What is DISC?</strong></p>
-                    <p>DISC is a behavioral assessment tool that measures four primary personality types:</p>
-                    <ul style="margin: 15px 0 15px 30px; line-height: 1.8;">
-                        <li><strong>D - Dominance:</strong> Direct, results-oriented, decisive</li>
-                        <li><strong>I - Influence:</strong> Outgoing, enthusiastic, persuasive</li>
-                        <li><strong>S - Steadiness:</strong> Reliable, patient, supportive</li>
-                        <li><strong>C - Conscientiousness:</strong> Analytical, detail-oriented, accurate</li>
-                    </ul>
-                    <p><strong>How it works:</strong> This assessment contains 24 pairs of words. For each pair, select the word that is most like you and least like you. Your responses will be analyzed to determine your DISC profile.</p>
-                    <p style="color: #c62828; font-weight: 600; margin-top: 20px;">⏰ Important: You have 3 days to complete this assessment. Please complete it in one session.</p>
+                    <p>This assessment measures four primary behavioral traits (Dominance, Influence, Steadiness, Conscientiousness).</p>
+                    <p style="color: #c62828; font-weight: 600; margin-top: 15px;">⏰ Important: Complete this assessment in one continuous session.</p>
                 </div>
                 <div class="button-group" style="margin-top: 30px;">
                     <button class="btn-start" onclick="startAssessment()" style="flex: 1;">Start Assessment</button>
@@ -456,29 +341,28 @@
                 <div class="button-group">
                     <button class="btn-prev" id="prevBtn" onclick="previousQuestion()" style="display:none;">← Previous</button>
                     <button class="btn-next" id="nextBtn" onclick="nextQuestion()">Next →</button>
-                    <button class="btn-submit hidden" id="submitBtn" onclick="submitAssessment()">View Results</button>
+                    <button class="btn-submit hidden" id="submitBtn" onclick="submitAssessment()">Submit Assessment</button>
                 </div>
             </div>
 
-            <!-- Results Section -->
+            <!-- Results Section (Khusus Tampilan Kandidat: HANYA CONFIRMATION) -->
             <div id="results" class="result-container">
+                <div style="font-size: 4em; color: #2e7d32; margin-bottom: 10px;">✅</div>
+                <h2 style="margin-bottom: 15px; color: #333;">Assessment Completed!</h2>
                 <div class="token-info">
-                    <strong>✓ Assessment Completed!</strong> | Token: <span id="displayToken3"></span>
+                    <strong>Token:</strong> <span id="displayToken3"></span> | Status: <strong>Submitted Successfully</strong>
                 </div>
-
-                <h2 style="text-align: center; margin-bottom: 20px;">Your DISC Profile</h2>
-                <div class="disc-type" id="resultType" style="text-align: center;"></div>
-                <div class="scores" id="scoresDisplay"></div>
-                <div class="disc-description" id="resultDescription"></div>
-                <div class="button-group">
-                    <button class="btn-download" onclick="downloadResults()">📥 Download Result</button>
+                <div class="disc-description" style="text-align: center;">
+                    <p><strong>Thank you for completing the assessment.</strong></p>
+                    <p>Your responses have been securely submitted to the HR Team for evaluation. Results are strictly confidential and will be reviewed directly by HR.</p>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // DISC Assessment Questions - 24 pairs
+        const HR_EMAIL = "fiscall.aditama@albea-group.com";
+
         const questions = [
             { id: 1, most: "Ambitious", least: "Friendly" },
             { id: 2, most: "Enthusiastic", least: "Competitive" },
@@ -506,7 +390,6 @@
             { id: 24, most: "Perfectionist", least: "Outspoken" }
         ];
 
-        // DISC trait mapping
         const traitToDISC = {
             'Ambitious': 'D', 'Friendly': 'I', 'Enthusiastic': 'I', 'Competitive': 'D',
             'Loyal': 'S', 'Outgoing': 'I', 'Analytical': 'C', 'Spontaneous': 'I',
@@ -522,30 +405,6 @@
             'Peacemaker': 'S', 'Risk-taker': 'D', 'Perfectionist': 'C', 'Outspoken': 'D'
         };
 
-        // Results descriptions
-        const discDescriptions = {
-            'D': {
-                name: 'D - Dominance',
-                title: 'The Achiever',
-                description: '<strong>Direct, Results-Oriented, Decisive</strong><p>You are a natural leader who is focused on results and taking charge. You\'re driven, competitive, and confident in your abilities. You like to take control, make quick decisions, and move forward. You value efficiency and directness in communication.</p><p><strong>Strengths:</strong> Leadership, decisiveness, courage, confidence, competitive spirit</p><p><strong>Work Style:</strong> You prefer challenging tasks, autonomy, and clear goals. You motivate others through competition and results.</p><p><strong>Growth Areas:</strong> Learning to listen more, building consensus, and showing patience with others\' processes.</p>'
-            },
-            'I': {
-                name: 'I - Influence',
-                title: 'The Influencer',
-                description: '<strong>Outgoing, Enthusiastic, Persuasive</strong><p>You are a people-person who loves interacting with others. You\'re enthusiastic, optimistic, and great at inspiring and persuading people. You bring energy and excitement to any situation and prefer working with a team.</p><p><strong>Strengths:</strong> Charisma, communication, optimism, creativity, networking</p><p><strong>Work Style:</strong> You thrive in collaborative environments where you can share ideas and connect with others. You excel at presentations and building relationships.</p><p><strong>Growth Areas:</strong> Following through on details, being more organized, and focusing on tasks.</p>'
-            },
-            'S': {
-                name: 'S - Steadiness',
-                title: 'The Supporter',
-                description: '<strong>Reliable, Patient, Supportive</strong><p>You are a dependable team player who values harmony and cooperation. You\'re patient, loyal, and committed to helping others succeed. You prefer stability and consistency, and you create a calm, supportive environment.</p><p><strong>Strengths:</strong> Reliability, loyalty, patience, teamwork, stability</p><p><strong>Work Style:</strong> You\'re comfortable with established processes and prefer gradual change. You\'re great at supporting others and maintaining team harmony.</p><p><strong>Growth Areas:</strong> Being more assertive, embracing change, and taking initiative more often.</p>'
-            },
-            'C': {
-                name: 'C - Conscientiousness',
-                title: 'The Analyzer',
-                description: '<strong>Analytical, Detail-Oriented, Accurate</strong><p>You are thoughtful and deliberate, with a strong focus on accuracy and quality. You like to analyze information before making decisions and prefer doing things correctly over doing them quickly.</p><p><strong>Strengths:</strong> Analytical thinking, attention to detail, accuracy, thoroughness, problem-solving</p><p><strong>Work Style:</strong> You excel in roles requiring precision and careful analysis. You prefer working independently and having clear standards to follow.</p><p><strong>Growth Areas:</strong> Speeding up decision-making, being more flexible, and not getting too caught up in details.</p>'
-            }
-        };
-
         let currentQuestion = 0;
         let answers = {};
         let scores = { D: 0, I: 0, S: 0, C: 0 };
@@ -554,7 +413,6 @@
         let expiryTime = null;
         let timerInterval = null;
 
-        // LocalStorage helper functions
         function saveToLocalStorage(key, data) {
             localStorage.setItem(key, JSON.stringify(data));
         }
@@ -564,18 +422,15 @@
             return data ? JSON.parse(data) : null;
         }
 
-        // Get all tokens from localStorage (simulating a database)
         function getAllTokens() {
             return getFromLocalStorage('discTokens') || [];
         }
 
-        // Find a token by code
         function findToken(code) {
             const tokens = getAllTokens();
             return tokens.find(t => t.code === code.toUpperCase());
         }
 
-        // Update token status
         function updateTokenStatus(code, status, results = null) {
             const tokens = getAllTokens();
             const tokenIndex = tokens.findIndex(t => t.code === code.toUpperCase());
@@ -589,7 +444,6 @@
             }
         }
 
-        // Validate token
         function validateToken() {
             const tokenInput = document.getElementById('tokenInput').value.trim().toUpperCase();
             const nameInput = document.getElementById('nameInput').value.trim();
@@ -609,9 +463,8 @@
                 return;
             }
 
-            // Check if token has expired
             const createdAt = new Date(token.createdAt);
-            const expiryAt = new Date(createdAt.getTime() + 3 * 24 * 60 * 60 * 1000); // 3 days
+            const expiryAt = new Date(createdAt.getTime() + 3 * 24 * 60 * 60 * 1000);
             const now = new Date();
 
             if (now > expiryAt) {
@@ -619,237 +472,4 @@
                 return;
             }
 
-            // Check if token has already been used
-            if (token.status === 'USED') {
-                alertDiv.innerHTML = '<div class="alert alert-warning">⚠️ This token has already been used. You cannot take the assessment again with this token.</div>';
-                return;
-            }
-
-            // Token is valid
-            currentToken = tokenInput;
-            candidateName = nameInput || 'Anonymous';
-            expiryTime = expiryAt;
-            
-            // Hide token screen and show intro
-            document.getElementById('tokenScreen').classList.add('hidden');
-            document.getElementById('intro').classList.remove('hidden');
-            document.getElementById('displayToken').textContent = currentToken;
-            document.getElementById('displayName').textContent = candidateName;
-
-            startTimer();
-        }
-
-        function startTimer() {
-            updateTimerDisplay();
-            timerInterval = setInterval(updateTimerDisplay, 1000);
-        }
-
-        function updateTimerDisplay() {
-            const now = new Date();
-            const timeLeft = expiryTime - now;
-
-            if (timeLeft <= 0) {
-                clearInterval(timerInterval);
-                document.getElementById('timeRemaining').textContent = 'Expired';
-                document.getElementById('timeRemaining2').textContent = 'Expired';
-                document.getElementById('timeRemaining3').textContent = 'Expired';
-                return;
-            }
-
-            const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
-
-            const timeString = `${days}d ${hours}h ${minutes}m ${seconds}s`;
-            document.getElementById('timeRemaining').textContent = timeString;
-            document.getElementById('timeRemaining2').textContent = timeString;
-            if (document.getElementById('timeRemaining3')) {
-                document.getElementById('timeRemaining3').textContent = timeString;
-            }
-        }
-
-        function startAssessment() {
-            document.getElementById('intro').classList.add('hidden');
-            document.getElementById('assessment').classList.remove('hidden');
-            document.getElementById('displayToken2').textContent = currentToken;
-            renderQuestion();
-        }
-
-        function renderQuestion() {
-            const question = questions[currentQuestion];
-            let html = `
-                <div class="question-container active">
-                    <div class="question-number">Question ${currentQuestion + 1} of ${questions.length}</div>
-                    <div class="question-text">Select the trait that is MOST like you and LEAST like you</div>
-                    <div class="question-type">
-                        <strong>Trait Pair ${currentQuestion + 1}:</strong> "${question.most}" or "${question.least}"
-                    </div>
-                    <div class="options">
-                        <div class="option">
-                            <input type="radio" id="most_${question.id}" name="q${question.id}" value="most" 
-                                ${answers[question.id]?.most ? 'checked' : ''}>
-                            <label for="most_${question.id}">
-                                <strong>MOST like me:</strong> ${question.most}
-                            </label>
-                        </div>
-                        <div class="option">
-                            <input type="radio" id="least_${question.id}" name="q${question.id}" value="least" 
-                                ${answers[question.id]?.least ? 'checked' : ''}>
-                            <label for="least_${question.id}">
-                                <strong>LEAST like me:</strong> ${question.least}
-                            </label>
-                        </div>
-                    </div>
-                </div>
-            `;
-
-            document.getElementById('questionsWrapper').innerHTML = html;
-
-            // Update progress
-            const progress = ((currentQuestion + 1) / questions.length) * 100;
-            document.getElementById('progressFill').style.width = progress + '%';
-
-            // Update buttons
-            document.getElementById('prevBtn').style.display = currentQuestion > 0 ? 'block' : 'none';
-            document.getElementById('nextBtn').classList.toggle('hidden', currentQuestion === questions.length - 1);
-            document.getElementById('submitBtn').classList.toggle('hidden', currentQuestion !== questions.length - 1);
-
-            // Check if question is answered
-            const questionAnswered = answers[question.id];
-            document.getElementById('nextBtn').disabled = !questionAnswered;
-            document.getElementById('submitBtn').disabled = !questionAnswered;
-
-            // Add change listeners
-            document.querySelectorAll(`input[name="q${question.id}"]`).forEach(input => {
-                input.addEventListener('change', function() {
-                    if (this.value === 'most') {
-                        answers[question.id] = { most: true };
-                    } else {
-                        answers[question.id] = { least: true };
-                    }
-                    document.getElementById('nextBtn').disabled = false;
-                    document.getElementById('submitBtn').disabled = false;
-                });
-            });
-        }
-
-        function nextQuestion() {
-            if (currentQuestion < questions.length - 1) {
-                currentQuestion++;
-                renderQuestion();
-                document.querySelector('.question-container').scrollIntoView({ behavior: 'smooth' });
-            }
-        }
-
-        function previousQuestion() {
-            if (currentQuestion > 0) {
-                currentQuestion--;
-                renderQuestion();
-                document.querySelector('.question-container').scrollIntoView({ behavior: 'smooth' });
-            }
-        }
-
-        function submitAssessment() {
-            // Calculate scores
-            scores = { D: 0, I: 0, S: 0, C: 0 };
-
-            questions.forEach((q) => {
-                const answer = answers[q.id];
-                if (answer?.most) {
-                    const trait = q.most;
-                    const discType = traitToDISC[trait];
-                    if (discType) scores[discType]++;
-                } else if (answer?.least) {
-                    const trait = q.least;
-                    const discType = traitToDISC[trait];
-                    if (discType) scores[discType]++;
-                }
-            });
-
-            // Save results
-            const results = {
-                token: currentToken,
-                name: candidateName,
-                scores: scores,
-                primaryType: Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b),
-                completedAt: new Date().toISOString()
-            };
-
-            updateTokenStatus(currentToken, 'USED', results);
-            clearInterval(timerInterval);
-            showResults();
-        }
-
-        function showResults() {
-            document.getElementById('assessment').classList.add('hidden');
-            document.getElementById('results').classList.add('active');
-            document.getElementById('displayToken3').textContent = currentToken;
-
-            const primaryType = Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
-            const resultData = discDescriptions[primaryType];
-
-            document.getElementById('resultType').textContent = resultData.title;
-            document.getElementById('resultDescription').innerHTML = resultData.description;
-
-            let scoresHTML = '';
-            Object.keys(scores).forEach(type => {
-                scoresHTML += `
-                    <div class="score-box">
-                        <h4>${type}</h4>
-                        <div class="score-value">${scores[type]}</div>
-                    </div>
-                `;
-            });
-            document.getElementById('scoresDisplay').innerHTML = scoresHTML;
-        }
-
-        function downloadResults() {
-            const primaryType = Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
-            const resultData = discDescriptions[primaryType];
-
-            let content = `DISC ASSESSMENT RESULTS\n`;
-            content += `========================\n\n`;
-            content += `Candidate Name: ${candidateName}\n`;
-            content += `Token: ${currentToken}\n`;
-            content += `Completed: ${new Date().toLocaleString()}\n\n`;
-            content += `Your Profile: ${resultData.title}\n`;
-            content += `Type: ${resultData.name}\n\n`;
-            content += `SCORES:\n`;
-            Object.keys(scores).forEach(type => {
-                content += `${type}: ${scores[type]}\n`;
-            });
-            content += `\n${resultData.description.replace(/<[^>]*>/g, '')}\n`;
-
-            const element = document.createElement('a');
-            element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(content));
-            element.setAttribute('download', `DISC-Assessment-${currentToken}-${candidateName}.txt`);
-            element.style.display = 'none';
-            document.body.appendChild(element);
-            element.click();
-            document.body.removeChild(element);
-        }
-
-        // Check if there are existing tokens, if not, create demo tokens
-        function initializeDemoTokens() {
-            const tokens = getAllTokens();
-            if (tokens.length === 0) {
-                const now = new Date();
-                const demoTokens = [
-                    { code: 'DISC001', status: 'UNUSED', createdAt: now.toISOString() },
-                    { code: 'DISC002', status: 'UNUSED', createdAt: now.toISOString() },
-                    { code: 'DISC003', status: 'UNUSED', createdAt: now.toISOString() },
-                    { code: 'DEMO001', status: 'USED', createdAt: new Date(now.getTime() - 1 * 60 * 1000).toISOString(), completedAt: now.toISOString(), 
-                      results: { token: 'DEMO001', name: 'John Doe', scores: { D: 8, I: 6, S: 5, C: 5 }, primaryType: 'D', completedAt: now.toISOString() } }
-                ];
-                saveToLocalStorage('discTokens', demoTokens);
-            }
-        }
-
-        // Initialize on page load
-        window.addEventListener('load', function() {
-            initializeDemoTokens();
-        });
-    </script>
-</body>
-</html>
+            if
