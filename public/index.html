@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DISC Assessment</title>
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-dark: #3730a3;
+      --panel-bg: #ffffff;
+      --bg: linear-gradient(135deg, #eef2ff, #f8fafc);
+      --text: #1f2937;
+      --muted: #6b7280;
+      --danger: #b91c1c;
+      --success: #166534;
+      --warning: #b45309;
+      --border: #e5e7eb;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .container {
+      max-width: 960px;
+      margin: 40px auto;
+      background: var(--panel-bg);
+      border-radius: 18px;
+      box-shadow: 0 12px 24px rgba(15, 23, 42, 0.12);
+      overflow: hidden;
+    }
+
+    .header {
+      padding: 32px 24px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white;
+      text-align: center;
+    }
+
+    .header h1 {
+      margin: 0 0 8px;
+      font-size: 2.2rem;
+    }
+
+    .header p {
+      margin: 0;
+      opacity: 0.9;
+    }
+
+    .content {
+      padding: 32px 24px 40px;
+    }
+
+    .panel {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .alert {
+      padding: 12px 14px;
+      border-radius: 8px;
+      margin-bottom: 18px;
+      font-weight: 600;
+    }
+
+    .alert.error {
+      background: #fee2e2;
+      color: var(--danger);
+      border: 1px solid #fecaca;
+    }
+
+    .alert.success {
+      background: #dcfce7;
+      color: var(--success);
+      border: 1px solid #bbf7d0;
+    }
+
+    .alert.info {
+      background: #dbeafe;
+      color: #1d4ed8;
+      border: 1px solid #bfdbfe;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      font-size: 1rem;
+    }
+
+    input[type="text"]:focus {
+      outline: 2px solid rgba(79, 70, 229, 0.2);
+      border-color: var(--primary);
+    }
+
+    button {
+      font-size: 1rem;
+      border: none;
+      border-radius: 10px;
+      padding: 12px 18px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-weight: 700;
+    }
+
+    .primary-btn {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white;
+      width: 100%;
+    }
+
+    .secondary-btn {
+      background: #e5e7eb;
+      color: var(--text);
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+    }
+
+    .nav-row {
+      display: flex;
+      gap: 12px;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .token-box {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      background: #eef2ff;
+      border: 1px solid #c7d2fe;
+      color: #312e81;
+      padding: 12px 14px;
+      border-radius: 10px;
+      margin-bottom: 18px;
+      font-size: 0.95rem;
+    }
+
+    .question-block {
+      display: none;
+    }
+
+    .question-block.active {
+      display: block;
+      animation: fadeIn 0.2s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .question-number {
+      font-size: 0.8rem;
+      letter-spacing: 0.04em;
+      color: var(--primary);
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .question-text {
+      font-size: 1.35rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+
+    .options {
+      display: grid;
+      gap: 12px;
+    }
+
+    .option {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 16px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: white;
+    }
+
+    .option input {
+      width: 18px;
+      height: 18px;
+    }
+
+    .option label {
+      display: block;
+      width: 100%;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 10px;
+      background: #e5e7eb;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      transition: width 0.2s ease;
+    }
+
+    .result-box {
+      text-align: center;
+    }
+
+    .profile-type {
+      font-size: 2.3rem;
+      font-weight: 800;
+      color: var(--primary-dark);
+      margin: 18px 0;
+    }
+
+    .score-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(120px, 1fr));
+      gap: 12px;
+      margin: 20px 0;
+    }
+
+    .score-box {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+    }
+
+    .score-box h4 {
+      margin: 0 0 10px;
+      color: var(--primary);
+      font-size: 1.2rem;
+    }
+
+    .score-box .value {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .admin-link {
+      display: inline-block;
+      margin-top: 12px;
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    @media (max-width: 700px) {
+      .score-grid {
+        grid-template-columns: repeat(2, minmax(120px, 1fr));
+      }
+      .container {
+        margin: 20px 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>DISC Assessment</h1>
+      <p>Behavioral style evaluation</p>
+    </div>
+
+    <div class="content">
+      <div id="tokenScreen">
+        <div class="panel">
+          <h3>Access your assessment</h3>
+          <p>Enter the assessment token provided to you. No login is required.</p>
+          <div id="tokenMessage" class="alert info">You must provide a valid, unused token to begin.</div>
+
+          <div class="form-group">
+            <label for="tokenInput">Assessment Token</label>
+            <input id="tokenInput" type="text" placeholder="Example: DISC123ABC" />
+          </div>
+
+          <div class="form-group">
+            <label for="candidateNameInput">Candidate Name (Optional)</label>
+            <input id="candidateNameInput" type="text" placeholder="Enter your name" />
+          </div>
+
+          <button class="primary-btn" id="startBtn">Validate Token & Start</button>
+          <a class="admin-link" href="/admin.html" target="_blank">Admin dashboard</a>
+        </div>
+      </div>
+
+      <div id="introScreen" class="hidden">
+        <div class="token-box">
+          <span><strong>Token:</strong> <span id="displayToken"></span></span>
+          <span><strong>Name:</strong> <span id="displayName"></span></span>
+          <span><strong>Expires in:</strong> <span id="expireCountdown">--</span></span>
+        </div>
+
+        <div class="panel">
+          <h3>Welcome to the DISC Assessment</h3>
+          <p>This assessment contains 24 questions. For each item, choose the word that is most like you and least like you.</p>
+          <p><strong>Important:</strong> Only a valid, unused token may be used. If the test is not completed within 3 days, the token will expire.</p>
+          <button class="primary-btn" id="beginBtn">Start Assessment</button>
+        </div>
+      </div>
+
+      <div id="assessmentScreen" class="hidden">
+        <div class="token-box">
+          <span><strong>Token:</strong> <span id="assessmentToken"></span></span>
+          <span><strong>Time remaining:</strong> <span id="timeRemaining">--</span></span>
+        </div>
+
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <div id="questionContainer"></div>
+
+        <div class="nav-row">
+          <button class="secondary-btn" id="prevBtn">Previous</button>
+          <button class="primary-btn" id="nextBtn">Next</button>
+          <button class="primary-btn hidden" id="submitBtn">Submit</button>
+        </div>
+      </div>
+
+      <div id="resultScreen" class="hidden">
+        <div class="panel result-box">
+          <h2>Your DISC Profile</h2>
+          <div class="profile-type" id="profileType">D</div>
+          <div id="resultSummary"></div>
+
+          <div class="score-grid" id="scoreGrid"></div>
+
+          <button class="primary-btn" id="downloadBtn">Download Results</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const questions = [
+      { id: 1, most: 'Ambitious', least: 'Friendly' },
+      { id: 2, most: 'Enthusiastic', least: 'Competitive' },
+      { id: 3, most: 'Loyal', least: 'Outgoing' },
+      { id: 4, most: 'Analytical', least: 'Spontaneous' },
+      { id: 5, most: 'Decisive', least: 'Reliable' },
+      { id: 6, most: 'Expressive', least: 'Logical' },
+      { id: 7, most: 'Patient', least: 'Aggressive' },
+      { id: 8, most: 'Accurate', least: 'Adventurous' },
+      { id: 9, most: 'Direct', least: 'Sympathetic' },
+      { id: 10, most: 'Persuasive', least: 'Practical' },
+      { id: 11, most: 'Supportive', least: 'Bold' },
+      { id: 12, most: 'Cautious', least: 'Talkative' },
+      { id: 13, most: 'Forceful', least: 'Cheerful' },
+      { id: 14, most: 'Optimistic', least: 'Organized' },
+      { id: 15, most: 'Cooperative', least: 'Commanding' },
+      { id: 16, most: 'Precise', least: 'Playful' },
+      { id: 17, most: 'Confident', least: 'Gentle' },
+      { id: 18, most: 'Charming', least: 'Meticulous' },
+      { id: 19, most: 'Dependable', least: 'Adventurous' },
+      { id: 20, most: 'Detailed', least: 'Impulsive' },
+      { id: 21, most: 'Powerful', least: 'Cheerful' },
+      { id: 22, most: 'Talkative', least: 'Cautious' },
+      { id: 23, most: 'Peacemaker', least: 'Risk-taker' },
+      { id: 24, most: 'Perfectionist', least: 'Outspoken' }
+    ];
+
+    const traitMap = {
+      Ambitious: 'D', Friendly: 'I', Enthusiastic: 'I', Competitive: 'D', Loyal: 'S', Outgoing: 'I',
+      Analytical: 'C', Spontaneous: 'I', Decisive: 'D', Reliable: 'S', Expressive: 'I', Logical: 'C',
+      Patient: 'S', Aggressive: 'D', Accurate: 'C', Adventurous: 'I', Direct: 'D', Sympathetic: 'S',
+      Persuasive: 'I', Practical: 'C', Supportive: 'S', Bold: 'D', Cautious: 'C', Talkative: 'I',
+      Forceful: 'D', Cheerful: 'I', Optimistic: 'I', Organized: 'C', Cooperative: 'S', Commanding: 'D',
+      Precise: 'C', Playful: 'I', Confident: 'D', Gentle: 'S', Charming: 'I', Meticulous: 'C',
+      Dependable: 'S', Detailed: 'C', Impulsive: 'I', Powerful: 'D', Peacemaker: 'S', 'Risk-taker': 'D',
+      Perfectionist: 'C', Outspoken: 'D'
+    };
+
+    const profileDescriptions = {
+      D: {
+        title: 'The Achiever',
+        description: 'Direct, decisive, and focused on results. You lead with confidence and action.'
+      },
+      I: {
+        title: 'The Influencer',
+        description: 'Outgoing, optimistic, and social. You motivate people and bring energy to teams.'
+      },
+      S: {
+        title: 'The Supporter',
+        description: 'Reliable, patient, and collaborative. You create stability and trust in group settings.'
+      },
+      C: {
+        title: 'The Analyzer',
+        description: 'Thoughtful, accurate, and detail-oriented. You think carefully before deciding.'
+      }
+    };
+
+    let candidateToken = '';
+    let candidateName = 'Anonymous';
+    let expiresAt = null;
+    let currentQuestionIndex = 0;
+    let answers = {};
+    let scores = { D: 0, I: 0, S: 0, C: 0 };
+    let expiryTimer = null;
+
+    const tokenInput = document.getElementById('tokenInput');
+    const candidateNameInput = document.getElementById('candidateNameInput');
+    const tokenMessage = document.getElementById('tokenMessage');
+    const startBtn = document.getElementById('startBtn');
+    const beginBtn = document.getElementById('beginBtn');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const submitBtn = document.getElementById('submitBtn');
+    const questionContainer = document.getElementById('questionContainer');
+    const progressFill = document.getElementById('progressFill');
+
+    function showMessage(type, text) {
+      tokenMessage.className = `alert ${type}`;
+      tokenMessage.textContent = text;
+    }
+
+    async function validateToken() {
+      const token = (tokenInput.value || '').trim().toUpperCase();
+      const name = (candidateNameInput.value || '').trim() || 'Anonymous';
+
+      if (!token) {
+        showMessage('error', 'Please enter a token.');
+        return;
+      }
+
+      try {
+        const response = await fetch('/api/validate-token', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token, candidateName: name })
+        });
+
+        const data = await response.json();
+        if (!response.ok || !data.valid) {
+          showMessage('error', data.message || 'Token validation failed.');
+          return;
+        }
+
+        candidateToken = data.token;
+        candidateName = data.candidateName;
+        expiresAt = new Date(data.expiresAt);
+
+        document.getElementById('displayToken').textContent = candidateToken;
+        document.getElementById('displayName').textContent = candidateName;
+        document.getElementById('assessmentToken').textContent = candidateToken;
+        document.getElementById('tokenScreen').classList.add('hidden');
+        document.getElementById('introScreen').classList.remove('hidden');
+        updateExpiryCounter();
+        startExpiryTimer();
+        showMessage('success', 'Token accepted. You may begin the assessment.');
+      } catch (error) {
+        showMessage('error', 'Unable to validate token. Please try again.');
+      }
+    }
+
+    function updateExpiryCounter() {
+      if (!expiresAt) return;
+      const diff = expiresAt - new Date();
+      if (diff <= 0) {
+        document.getElementById('expireCountdown').textContent = 'Expired';
+        document.getElementById('timeRemaining').textContent = 'Expired';
+        return;
+      }
+
+      const totalSeconds = Math.floor(diff / 1000);
+      const d = Math.floor(totalSeconds / 86400);
+      const h = Math.floor((totalSeconds % 86400) / 3600);
+      const m = Math.floor((totalSeconds % 3600) / 60);
+      const s = totalSeconds % 60;
+
+      const text = `${d}d ${h}h ${m}m ${s}s`;
+      document.getElementById('expireCountdown').textContent = text;
+      document.getElementById('timeRemaining').textContent = text;
+    }
+
+    function startExpiryTimer() {
+      clearInterval(expiryTimer);
+      expiryTimer = setInterval(updateExpiryCounter, 1000);
+    }
+
+    function beginAssessment() {
+      document.getElementById('introScreen').classList.add('hidden');
+      document.getElementById('assessmentScreen').classList.remove('hidden');
+      renderQuestion();
+    }
+
+    function renderQuestion() {
+      const currentQuestion = questions[currentQuestionIndex];
+      questionContainer.innerHTML = `
+        <div class="question-block active">
+          <div class="question-number">Question ${currentQuestionIndex + 1} of ${questions.length}</div>
+          <div class="question-text">Select the word that is MOST like you and the one LEAST like you.</div>
+          <div class="options">
+            <div class="option">
+              <input type="radio" id="most-${currentQuestion.id}" name="q-${currentQuestion.id}" value="most" ${answers[currentQuestion.id] === 'most' ? 'checked' : ''} />
+              <label for="most-${currentQuestion.id}"><strong>MOST like me:</strong> ${currentQuestion.most}</label>
+            </div>
+            <div class="option">
+              <input type="radio" id="least-${currentQuestion.id}" name="q-${currentQuestion.id}" value="least" ${answers[currentQuestion.id] === 'least' ? 'checked' : ''} />
+              <label for="least-${currentQuestion.id}"><strong>LEAST like me:</strong> ${currentQuestion.least}</label>
+            </div>
+          </div>
+        </div>
+      `;
+
+      const percent = ((currentQuestionIndex + 1) / questions.length) * 100;
+      progressFill.style.width = percent + '%';
+
+      const selected = answers[currentQuestion.id];
+      nextBtn.classList.toggle('hidden', currentQuestionIndex === questions.length - 1);
+      submitBtn.classList.toggle('hidden', currentQuestionIndex !== questions.length - 1);
+      prevBtn.style.visibility = currentQuestionIndex === 0 ? 'hidden' : 'visible';
+
+      if (!selected) {
+        nextBtn.disabled = true;
+        submitBtn.disabled = true;
+      } else {
+        nextBtn.disabled = false;
+        submitBtn.disabled = false;
+      }
+
+      bindOptionEvents();
+    }
+
+    function bindOptionEvents() {
+      document.querySelectorAll('input[type="radio"]').forEach((radio) => {
+        radio.addEventListener('change', (event) => {
+          const target = event.target;
+          const name = target.name;
+          const questionId = Number(name.replace('q-', ''));
+          answers[questionId] = target.value;
+          renderQuestion();
+        });
+      });
+    }
+
+    function nextQuestion() {
+      if (currentQuestionIndex < questions.length - 1) {
+        currentQuestionIndex += 1;
+        renderQuestion();
+      }
+    }
+
+    function prevQuestion() {
+      if (currentQuestionIndex > 0) {
+        currentQuestionIndex -= 1;
+        renderQuestion();
+      }
+    }
+
+    function calculateScores() {
+      scores = { D: 0, I: 0, S: 0, C: 0 };
+      questions.forEach((q) => {
+        const selected = answers[q.id];
+        if (!selected) return;
+
+        const trait = selected === 'most' ? q.most : q.least;
+        const type = traitMap[trait];
+        if (type) scores[type] += 1;
+      });
+      return scores;
+    }
+
+    async function submitAssessment() {
+      const finalScores = calculateScores();
+      const primary = Object.keys(finalScores).sort((a, b) => finalScores[b] - finalScores[a])[0];
+
+      try {
+        const response = await fetch('/api/submit-assessment', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            token: candidateToken,
+            candidateName,
+            scores: finalScores,
+            profileType: primary,
+            answers: answers
+          })
+        });
+
+        const data = await response.json();
+        if (!response.ok || !data.valid) {
+          showMessage('error', data.message || 'Assessment could not be submitted.');
+          return;
+        }
+
+        document.getElementById('assessmentScreen').classList.add('hidden');
+        document.getElementById('resultScreen').classList.remove('hidden');
+
+        const summary = profileDescriptions[primary];
+        document.getElementById('profileType').textContent = primary;
+        document.getElementById('resultSummary').innerHTML = `
+          <h3>${summary.title}</h3>
+          <p>${summary.description}</p>
+        `;
+
+        const scoreGrid = document.getElementById('scoreGrid');
+        scoreGrid.innerHTML = '';
+        Object.entries(finalScores).forEach(([type, value]) => {
+          const box = document.createElement('div');
+          box.className = 'score-box';
+          box.innerHTML = `<h4>${type}</h4><div class="value">${value}</div>`;
+          scoreGrid.appendChild(box);
+        });
+
+        document.getElementById('downloadBtn').onclick = () => {
+          const text = [
+            'DISC ASSESSMENT REPORT',
+            '--------------------',
+            `Candidate: ${candidateName}`,
+            `Token: ${candidateToken}`,
+            `Type: ${primary}`,
+            `Description: ${summary.description}`,
+            '',
+            'Scores:',
+            ...Object.entries(finalScores).map(([type, value]) => `${type}: ${value}`)
+          ].join('\n');
+
+          const blob = new Blob([text], { type: 'text/plain' });
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = `disc-report-${candidateToken}.txt`;
+          link.click();
+          URL.revokeObjectURL(url);
+        };
+      } catch (error) {
+        showMessage('error', 'Unable to submit assessment. Please try again.');
+      }
+    }
+
+    startBtn.addEventListener('click', validateToken);
+    beginBtn.addEventListener('click', beginAssessment);
+    prevBtn.addEventListener('click', prevQuestion);
+    nextBtn.addEventListener('click', nextQuestion);
+    submitBtn.addEventListener('click', submitAssessment);
+  </script>
+</body>
+</html>

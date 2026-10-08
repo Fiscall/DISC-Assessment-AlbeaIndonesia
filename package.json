@@ -1,0 +1,23 @@
+{
+  "name": "disc-assessment-app",
+  "version": "1.0.0",
+  "description": "DISC Assessment with token validation and admin dashboard",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "disc",
+    "assessment",
+    "node",
+    "express",
+    "sqlite"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "express": "^4.19.2",
+    "sqlite3": "^5.4.2"
+  }
+}

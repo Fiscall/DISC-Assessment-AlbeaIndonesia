@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DISC Assessment Admin</title>
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --dark: #1f2937;
+      --muted: #6b7280;
+      --bg: #f3f4f6;
+      --card: #ffffff;
+      --border: #e5e7eb;
+      --success: #166534;
+      --warning: #b45309;
+      --secondary: #dbeafe;
+      --danger: #b91c1c;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: var(--bg);
+      color: var(--dark);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 32px auto;
+      padding: 16px;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 2.1rem;
+    }
+
+    .admin-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px;
+      margin-bottom: 20px;
+      box-shadow: 0 8px 18px rgba(15, 23, 42, 0.05);
+    }
+
+    .top-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(150px, 1fr));
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .metric {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px;
+    }
+
+    .metric h4 {
+      margin: 0 0 10px;
+      color: var(--muted);
+      font-size: 0.9rem;
+      text-transform: uppercase;
+    }
+
+    .metric .value {
+      font-size: 2rem;
+      font-weight: 800;
+      margin: 0;
+    }
+
+    .metric .used { color: var(--success); }
+    .metric .unused { color: var(--primary); }
+    .metric .expired { color: var(--warning); }
+    .metric .completed { color: var(--dark); }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--card);
+      overflow: hidden;
+      border-radius: 12px;
+    }
+
+    th, td {
+      border-bottom: 1px solid var(--border);
+      padding: 12px 14px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #f8fafc;
+      color: var(--dark);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 5px 8px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .status-used { background: #dcfce7; color: var(--success); }
+    .status-unused { background: #dbeafe; color: #1d4ed8; }
+    .status-expired { background: #fef3c7; color: var(--warning); }
+
+    .key-input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 1rem;
+      margin-bottom: 12px;
+    }
+
+    .primary-btn {
+      background: linear-gradient(135deg, var(--primary), #3730a3);
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .secondary-btn {
+      background: #e5e7eb;
+      color: var(--dark);
+      border: none;
+      padding: 10px 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .report-section {
+      margin-top: 20px;
+    }
+
+    .report-section h2 {
+      margin-bottom: 12px;
+    }
+
+    @media (max-width: 920px) {
+      .top-grid {
+        grid-template-columns: repeat(2, minmax(140px, 1fr));
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>DISC Assessment Admin Dashboard</h1>
+      <button class="secondary-btn" id="reloadBtn">Refresh</button>
+    </div>
+
+    <div class="admin-box">
+      <label for="adminKeyInput">Admin access key</label>
+      <input class="key-input" id="adminKeyInput" type="password" placeholder="Enter admin access key" />
+      <button class="primary-btn" id="loadReportBtn">Load report</button>
+      <div id="adminMessage" class="muted" style="margin-top: 12px;">Use the server admin key to access the dashboard.</div>
+    </div>
+
+    <div id="dashboard" class="hidden">
+      <div class="top-grid" id="metricsGrid"></div>
+
+      <div class="report-section">
+        <h2>Completed Candidates</h2>
+        <div style="overflow-x:auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>Candidate</th>
+                <th>Token</th>
+                <th>Profile</th>
+                <th>Scores</th>
+                <th>Completed</th>
+              </tr>
+            </thead>
+            <tbody id="resultsTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="report-section">
+        <h2>Token Status</h2>
+        <div style="overflow-x:auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>Token</th>
+                <th>Status</th>
+                <th>Candidate</th>
+                <th>Created</th>
+                <th>Expires</th>
+                <th>Used</th>
+              </tr>
+            </thead>
+            <tbody id="tokensTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const adminKeyInput = document.getElementById('adminKeyInput');
+    const loadReportBtn = document.getElementById('loadReportBtn');
+    const reloadBtn = document.getElementById('reloadBtn');
+    const dashboard = document.getElementById('dashboard');
+    const adminMessage = document.getElementById('adminMessage');
+    const metricsGrid = document.getElementById('metricsGrid');
+    const resultsTableBody = document.getElementById('resultsTableBody');
+    const tokensTableBody = document.getElementById('tokensTableBody');
+
+    function formatDate(value) {
+      if (!value) return '—';
+      return new Date(value).toLocaleString();
+    }
+
+    function renderMetrics(summary) {
+      const metrics = [
+        { label: 'Total Tokens', value: summary.total, cls: 'unused' },
+        { label: 'Used', value: summary.used, cls: 'used' },
+        { label: 'Unused', value: summary.unused, cls: 'unused' },
+        { label: 'Expired', value: summary.expired, cls: 'expired' },
+        { label: 'Completion %', value: `${summary.completionRate}%`, cls: 'completed' }
+      ];
+
+      metricsGrid.innerHTML = metrics.map((metric) => `
+        <div class="metric">
+          <h4>${metric.label}</h4>
+          <p class="value ${metric.cls}">${metric.value}</p>
+        </div>
+      `).join('');
+    }
+
+    function renderResults(results) {
+      if (!results || !results.length) {
+        resultsTableBody.innerHTML = '<tr><td colspan="5" class="muted">No completed tests yet.</td></tr>';
+        return;
+      }
+
+      resultsTableBody.innerHTML = results.map((item) => {
+        const scores = JSON.parse(item.scores || '{}');
+        const scoreText = Object.entries(scores).map(([k, v]) => `${k}:${v}`).join(' | ');
+
+        return `
+          <tr>
+            <td>${item.candidate_name || 'Anonymous'}</td>
+            <td>${item.token_code}</td>
+            <td>${item.profile_type}</td>
+            <td>${scoreText}</td>
+            <td>${formatDate(item.completed_at)}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function renderTokens(tokens) {
+      if (!tokens || !tokens.length) {
+        tokensTableBody.innerHTML = '<tr><td colspan="6" class="muted">No tokens found.</td></tr>';
+        return;
+      }
+
+      tokensTableBody.innerHTML = tokens.map((item) => `
+        <tr>
+          <td>${item.code}</td>
+          <td><span class="status-badge status-${item.status.toLowerCase()}">${item.status}</span></td>
+          <td>${item.candidate_name || '—'}</td>
+          <td>${formatDate(item.created_at)}</td>
+          <td>${formatDate(item.expires_at)}</td>
+          <td>${item.used_at ? formatDate(item.used_at) : '—'}</td>
+        </tr>
+      `).join('');
+    }
+
+    async function loadReport() {
+      const adminKey = adminKeyInput.value.trim();
+      if (!adminKey) {
+        adminMessage.textContent = 'Admin key is required.';
+        return;
+      }
+
+      try {
+        const response = await fetch('/api/admin/report', {
+          method: 'GET',
+          headers: { 'x-admin-key': adminKey }
+        });
+
+        const data = await response.json();
+        if (!response.ok || !data.valid) {
+          adminMessage.textContent = data.message || 'Unable to access the admin report.';
+          return;
+        }
+
+        dashboard.classList.remove('hidden');
+        renderMetrics(data.summary);
+        renderResults(data.results);
+        renderTokens(data.tokens);
+        adminMessage.textContent = 'Report loaded successfully.';
+      } catch (error) {
+        adminMessage.textContent = 'Unable to load the report. Check the key and try again.';
+      }
+    }
+
+    loadReportBtn.addEventListener('click', loadReport);
+    reloadBtn.addEventListener('click', loadReport);
+  </script>
+</body>
+</html>
