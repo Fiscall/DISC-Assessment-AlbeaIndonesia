@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DISC Assessment Test</title>
-    <!-- Include EmailJS SDK untuk Pengiriman Email Otomatis -->
+    <title>DISC Assessment Test - PT. TECHPACK ASIA</title>
+    <!-- Include EmailJS SDK untuk Pengiriman Email Otomatis ke HR -->
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script type="text/javascript">
         (function() {
@@ -41,22 +41,22 @@
         .header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 40px 20px;
+            padding: 30px 20px;
             text-align: center;
         }
 
         .header h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
+            font-size: 2.2em;
+            margin-bottom: 8px;
         }
 
         .header p {
-            font-size: 1.1em;
+            font-size: 1em;
             opacity: 0.9;
         }
 
         .content {
-            padding: 40px;
+            padding: 30px;
         }
 
         .progress-bar {
@@ -64,7 +64,7 @@
             height: 8px;
             background: #e0e0e0;
             border-radius: 10px;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             overflow: hidden;
         }
 
@@ -112,12 +112,6 @@
             border-left: 4px solid #c62828;
         }
 
-        .alert-warning {
-            background: #fff3e0;
-            color: #e65100;
-            border-left: 4px solid #e65100;
-        }
-
         .question-container {
             display: none;
         }
@@ -140,66 +134,57 @@
 
         .question-number {
             color: #667eea;
-            font-size: 0.9em;
+            font-size: 0.95em;
             font-weight: 600;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
 
         .question-text {
-            font-size: 1.3em;
+            font-size: 1.2em;
             color: #333;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             font-weight: 600;
         }
 
-        .question-type {
-            background: #f5f5f5;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            font-size: 0.95em;
-            color: #666;
-        }
-
-        .options {
-            display: grid;
-            gap: 15px;
-        }
-
-        .option {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-            cursor: pointer;
-            padding: 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            transition: all 0.3s ease;
+        .disc-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
             background: #fafafa;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #e0e0e0;
         }
 
-        .option:hover {
-            border-color: #667eea;
+        .disc-table th {
             background: #f0f2ff;
+            padding: 12px;
+            color: #667eea;
+            font-weight: 700;
+            border-bottom: 2px solid #e0e0e0;
         }
 
-        .option input[type="radio"] {
-            cursor: pointer;
-            width: 20px;
-            height: 20px;
-        }
-
-        .option label {
-            cursor: pointer;
-            flex: 1;
-            font-size: 1em;
+        .disc-table td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+            font-size: 0.98em;
             color: #333;
+        }
+
+        .disc-table tr:hover {
+            background: #f5f7ff;
+        }
+
+        .disc-table input[type="radio"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
         }
 
         .button-group {
             display: flex;
             gap: 15px;
-            margin-top: 40px;
+            margin-top: 30px;
             justify-content: space-between;
         }
 
@@ -242,31 +227,10 @@
 
         .disc-description {
             background: #f5f5f5;
-            padding: 30px;
+            padding: 25px;
             border-radius: 10px;
             margin: 20px 0;
             text-align: left;
-        }
-
-        .token-info {
-            background: #e3f2fd;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            font-size: 0.9em;
-            color: #1565c0;
-        }
-
-        .admin-link {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 0.9em;
-        }
-
-        .admin-link a {
-            color: #667eea;
-            text-decoration: none;
-            font-weight: 600;
         }
 
         .hidden {
@@ -278,60 +242,46 @@
     <div class="container">
         <div class="header">
             <h1>🎯 DISC Assessment</h1>
-            <p>Personality Assessment Platform</p>
+            <p>IML DISC Insights™ Analisa Sistem Kepribadian</p>
         </div>
 
         <div class="content">
-            <!-- Token Entry Screen -->
-            <div id="tokenScreen" class="token-screen active">
+            <!-- Form Identitas Kandidat (Langsung Buka Tanpa Token) -->
+            <div id="introScreen" class="intro-screen active">
                 <div class="disc-description">
-                    <h3>Welcome to DISC Assessment</h3>
-                    <p>Please enter your assessment token to begin the test.</p>
+                    <h3>SELAMAT DATANG DI TES DISC ASSESSMENT</h3>
+                    <p>Silakan isi data diri Anda di bawah ini sebelum memulai tes.</p>
                 </div>
 
-                <div id="tokenAlert"></div>
+                <div id="formAlert"></div>
 
                 <div class="form-group">
-                    <label for="tokenInput">Assessment Token:</label>
-                    <input type="text" id="tokenInput" placeholder="Enter your token code" autocomplete="off">
+                    <label for="nameInput">Nama Lengkap Kandidat *:</label>
+                    <input type="text" id="nameInput" placeholder="Masukkan nama lengkap Anda" required autocomplete="off">
                 </div>
 
                 <div class="form-group">
-                    <label for="nameInput">Your Name (Optional):</label>
-                    <input type="text" id="nameInput" placeholder="Enter your full name">
+                    <label for="emailInput">Alamat Email Kandidat *:</label>
+                    <input type="email" id="emailInput" placeholder="Masukkan email aktif Anda" required autocomplete="off">
+                </div>
+
+                <div class="disc-description">
+                    <h3>PETUNJUK PENGERJAAN:</h3>
+                    <ul style="margin: 10px 0 10px 20px; line-height: 1.6;">
+                        <li>Terdapat 24 kotak soal. Setiap kotak terdiri dari 4 kalimat/kata pendek[cite: 5, 6].</li>
+                        <li>Pilih <strong>1 Opsi Paling Sesuai (M / Most)</strong> yang PALING tepat mencerminkan diri Anda[cite: 5, 6].</li>
+                        <li>Pilih <strong>1 Opsi Kurang Sesuai (L / Least)</strong> yang KURANG menggambarkan diri Anda[cite: 5, 6].</li>
+                        <li>Pilihan M dan L <strong>tidak boleh berada pada baris yang sama</strong>[cite: 5, 6].</li>
+                    </ul>
                 </div>
 
                 <div class="button-group">
-                    <button class="btn-start" onclick="validateToken()">Start Assessment</button>
-                </div>
-
-                <div class="admin-link">
-                    <a href="admin.html" target="_blank">📊 Admin Dashboard</a>
-                </div>
-            </div>
-
-            <!-- Intro Section -->
-            <div id="intro" class="intro-container hidden">
-                <div class="token-info">
-                    <strong>Token:</strong> <span id="displayToken"></span> | <strong>Name:</strong> <span id="displayName"></span> | <strong>Time Remaining:</strong> <span id="timeRemaining"></span>
-                </div>
-
-                <div class="disc-description">
-                    <h3>Welcome to the DISC Assessment</h3>
-                    <p>This assessment measures four primary behavioral traits (Dominance, Influence, Steadiness, Conscientiousness).</p>
-                    <p style="color: #c62828; font-weight: 600; margin-top: 15px;">⏰ Important: Complete this assessment in one continuous session.</p>
-                </div>
-                <div class="button-group" style="margin-top: 30px;">
-                    <button class="btn-start" onclick="startAssessment()" style="flex: 1;">Start Assessment</button>
+                    <button class="btn-start" onclick="startAssessment()">Mulai Tes DISC</button>
                 </div>
             </div>
 
             <!-- Questions Section -->
             <div id="assessment" class="assessment-container hidden">
-                <div class="token-info">
-                    <strong>Token:</strong> <span id="displayToken2"></span> | <strong>Time Remaining:</strong> <span id="timeRemaining2"></span>
-                </div>
-
                 <div class="progress-bar">
                     <div class="progress-fill" id="progressFill"></div>
                 </div>
@@ -339,22 +289,19 @@
                 <div id="questionsWrapper"></div>
 
                 <div class="button-group">
-                    <button class="btn-prev" id="prevBtn" onclick="previousQuestion()" style="display:none;">← Previous</button>
-                    <button class="btn-next" id="nextBtn" onclick="nextQuestion()">Next →</button>
-                    <button class="btn-submit hidden" id="submitBtn" onclick="submitAssessment()">Submit Assessment</button>
+                    <button class="btn-prev" id="prevBtn" onclick="previousQuestion()" style="display:none;">← Sebelumnya</button>
+                    <button class="btn-next" id="nextBtn" onclick="nextQuestion()">Selanjutnya →</button>
+                    <button class="btn-submit hidden" id="submitBtn" onclick="submitAssessment()">Kirim Jawaban</button>
                 </div>
             </div>
 
-            <!-- Results Section (Khusus Tampilan Kandidat: HANYA CONFIRMATION) -->
+            <!-- Results Section (Hanya Konfirmasi Selesai untuk Kandidat) -->
             <div id="results" class="result-container">
                 <div style="font-size: 4em; color: #2e7d32; margin-bottom: 10px;">✅</div>
-                <h2 style="margin-bottom: 15px; color: #333;">Assessment Completed!</h2>
-                <div class="token-info">
-                    <strong>Token:</strong> <span id="displayToken3"></span> | Status: <strong>Submitted Successfully</strong>
-                </div>
+                <h2 style="margin-bottom: 15px; color: #333;">Tes DISC Telah Selesai!</h2>
                 <div class="disc-description" style="text-align: center;">
-                    <p><strong>Thank you for completing the assessment.</strong></p>
-                    <p>Your responses have been securely submitted to the HR Team for evaluation. Results are strictly confidential and will be reviewed directly by HR.</p>
+                    <p><strong>Terima kasih telah menyelesaikan tes DISC Assessment.</strong></p>
+                    <p>Jawaban Anda telah tersimpan dan terkirim secara langsung ke Tim HR untuk dievaluasi. Hasil bersifat rahasia dan hanya dapat diakses oleh tim Rekrutmen.</p>
                 </div>
             </div>
         </div>
@@ -363,113 +310,391 @@
     <script>
         const HR_EMAIL = "fiscall.aditama@albea-group.com";
 
+        // Data Soal 24 Kotak IML DISC Insights Analisa Sistem Kepribadian
         const questions = [
-            { id: 1, most: "Ambitious", least: "Friendly" },
-            { id: 2, most: "Enthusiastic", least: "Competitive" },
-            { id: 3, most: "Loyal", least: "Outgoing" },
-            { id: 4, most: "Analytical", least: "Spontaneous" },
-            { id: 5, most: "Decisive", least: "Reliable" },
-            { id: 6, most: "Expressive", least: "Logical" },
-            { id: 7, most: "Patient", least: "Aggressive" },
-            { id: 8, most: "Accurate", least: "Adventurous" },
-            { id: 9, most: "Direct", least: "Sympathetic" },
-            { id: 10, most: "Persuasive", least: "Practical" },
-            { id: 11, most: "Supportive", least: "Bold" },
-            { id: 12, most: "Cautious", least: "Talkative" },
-            { id: 13, most: "Forceful", least: "Cheerful" },
-            { id: 14, most: "Optimistic", least: "Organized" },
-            { id: 15, most: "Cooperative", least: "Commanding" },
-            { id: 16, most: "Precise", least: "Playful" },
-            { id: 17, most: "Confident", least: "Gentle" },
-            { id: 18, most: "Charming", least: "Meticulous" },
-            { id: 19, most: "Dependable", least: "Adventurous" },
-            { id: 20, most: "Detailed", least: "Impulsive" },
-            { id: 21, most: "Powerful", least: "Cheerful" },
-            { id: 22, most: "Talkative", least: "Cautious" },
-            { id: 23, most: "Peacemaker", least: "Risk-taker" },
-            { id: 24, most: "Perfectionist", least: "Outspoken" }
+            {
+                id: 1,
+                options: [
+                    { text: "Mudah bergaul, ramah", type: "I" },
+                    { text: "Penuh kepercayaan, Percaya kepada orang lain", type: "S" },
+                    { text: "Petualang, mengambil resiko", type: "D" },
+                    { text: "Toleran, Penuh hormat", type: "C" }
+                ]
+            },
+            {
+                id: 2,
+                options: [
+                    { text: "Yang penting adalah hasil", type: "D" },
+                    { text: "Melakukan dengan benar, ketepatan dihitung", type: "C" },
+                    { text: "Buat menjadi menyenangkan", type: "I" },
+                    { text: "Mari melakukan bersama", type: "S" }
+                ]
+            },
+            {
+                id: 3,
+                options: [
+                    { text: "Pendidikan, Kebudayaan", type: "C" },
+                    { text: "Pencapaian, Penghargaan", type: "D" },
+                    { text: "Keselamatan, Keamanan", type: "S" },
+                    { text: "Sosial Pertemuan, Kelompok", type: "I" }
+                ]
+            },
+            {
+                id: 4,
+                options: [
+                    { text: "Lembut, Pendiam", type: "S" },
+                    { text: "Optimis, Pengkhayal", type: "I" },
+                    { text: "Pusat perhatian, Mudah bersosialisasi", type: "I" },
+                    { text: "Pembuat perdamaian, Membawa ketenangan", type: "S" }
+                ]
+            },
+            {
+                id: 5,
+                options: [
+                    { text: "Akan melakukan tanpa kontrol diri", type: "I" },
+                    { text: "Akan membeli berdasarkan hasrat", type: "I" },
+                    { text: "Akan menunggu, Tidak ada tekanan", type: "S" },
+                    { text: "Akan membelanjakan apa yang saya inginkan", type: "D" }
+                ]
+            },
+            {
+                id: 6,
+                options: [
+                    { text: "Bertanggung jawab, Pendekatan langsung", type: "D" },
+                    { text: "Mudah bergaul, Antusias", type: "I" },
+                    { text: "Mudah ditebak, Konsisten", type: "S" },
+                    { text: "Waspada, Berhati-hati", type: "C" }
+                ]
+            },
+            {
+                id: 7,
+                options: [
+                    { text: "Mendorong orang lain", type: "I" },
+                    { text: "Berjuang demi kesempurnaan", type: "C" },
+                    { text: "Menjadi bagian tim", type: "S" },
+                    { text: "Ingin mencapai tujuan", type: "D" }
+                ]
+            },
+            {
+                id: 8,
+                options: [
+                    { text: "Ramah, Mudah berteman", type: "I" },
+                    { text: "Unik, Bosan dengan rutinitas", type: "I" },
+                    { text: "Aktif merubah hal-hal", type: "D" },
+                    { text: "Menginginkan sesuatu yang pasti", type: "C" }
+                ]
+            },
+            {
+                id: 9,
+                options: [
+                    { text: "Tidak mudah dikalahkan", type: "D" },
+                    { text: "Akan melakukan sesuai perintah mengikuti pimpinan", type: "S" },
+                    { text: "Riang, Ceria", type: "I" },
+                    { text: "Ingin segalanya teratur, Rapi", type: "C" }
+                ]
+            },
+            {
+                id: 10,
+                options: [
+                    { text: "Menjadi frustasi", type: "D" },
+                    { text: "Memendam perasaan dalam hati", type: "S" },
+                    { text: "Menceritakan sisi kehidupan", type: "I" },
+                    { text: "Berpihak pada oposisi", type: "C" }
+                ]
+            },
+            {
+                id: 11,
+                options: [
+                    { text: "Non Konfrontasi, Mengalah", type: "S" },
+                    { text: "Penuh dengan rincian", type: "C" },
+                    { text: "Perubahan pada menit terakhir", type: "I" },
+                    { text: "Penuntut, Perusak", type: "D" }
+                ]
+            },
+            {
+                id: 12,
+                options: [
+                    { text: "Saya akan pimpin mereka", type: "D" },
+                    { text: "Saya akan mengikuti", type: "S" },
+                    { text: "Saya akan bujuk mereka", type: "I" },
+                    { text: "Saya akan mendapatkan faktanya", type: "C" }
+                ]
+            },
+            {
+                id: 13,
+                options: [
+                    { text: "Hidup, Cerewet", type: "I" },
+                    { text: "Bekerja dengan cepat, tekun", type: "D" },
+                    { text: "Mencoba mempertahankan keseimbangan", type: "S" },
+                    { text: "Mencoba mengikuti aturan", type: "C" }
+                ]
+            },
+            {
+                id: 14,
+                options: [
+                    { text: "Menginginkan kemajuan", type: "D" },
+                    { text: "Puas dengan beberapa hal, mudah puas", type: "S" },
+                    { text: "Menggambarkan perasaan secara terbuka", type: "I" },
+                    { text: "Rendah hati, sederhana", type: "S" }
+                ]
+            },
+            {
+                id: 15,
+                options: [
+                    { text: "Memikirkan orang lain dahulu", type: "S" },
+                    { text: "Kompetitif, Menyukai tantangan", type: "D" },
+                    { text: "Optimis, Positif", type: "I" },
+                    { text: "Berpikiran logis, Sistematis", type: "C" }
+                ]
+            },
+            {
+                id: 16,
+                options: [
+                    { text: "Mengatur waktu secara efisien", type: "C" },
+                    { text: "Sering terburu-buru, Merasa tertekan", type: "D" },
+                    { text: "Hal-hal sosial merupakan hal yang penting", type: "I" },
+                    { text: "Menyelesaikan apa yang telah dimulai", type: "S" }
+                ]
+            },
+            {
+                id: 17,
+                options: [
+                    { text: "Tenang, Pendiam", type: "S" },
+                    { text: "Bahagia, Riang", type: "I" },
+                    { text: "Menyenangkan, Baik", type: "I" },
+                    { text: "Tegas, Berani", type: "D" }
+                ]
+            },
+            {
+                id: 18,
+                options: [
+                    { text: "Menyenangkan orang, Ramah", type: "I" },
+                    { text: "Tertawa keras, hidup", type: "I" },
+                    { text: "Berani, tegas", type: "D" },
+                    { text: "Tenang, Pendiam", type: "S" }
+                ]
+            },
+            {
+                id: 19,
+                options: [
+                    { text: "Menolak perubahan mendadak", type: "S" },
+                    { text: "Cenderung sering berjanji", type: "I" },
+                    { text: "Menyendiri jika dibawah tekanan", type: "C" },
+                    { text: "Tidak takut berkelahi", type: "D" }
+                ]
+            },
+            {
+                id: 20,
+                options: [
+                    { text: "Menghabiskan waktu berharga dengan orang lain", type: "I" },
+                    { text: "Merencanakan masa depan, Menyiapkan diri", type: "C" },
+                    { text: "Perjalanan menuju petualangan baru", type: "D" },
+                    { text: "Mendapat penghargaan jika mencapai tujuan", type: "D" }
+                ]
+            },
+            {
+                id: 21,
+                options: [
+                    { text: "Menginginkan kekuasaan lebih", type: "D" },
+                    { text: "Menginginkan kesempatan baru", type: "I" },
+                    { text: "Menghindari konflik apapun", type: "S" },
+                    { text: "Menginginkan arah yang jelas", type: "C" }
+                ]
+            },
+            {
+                id: 22,
+                options: [
+                    { text: "Seorang pendukung yang baik", type: "S" },
+                    { text: "Seorang pendengar yang baik", type: "S" },
+                    { text: "Seorang penganalisa yang baik", type: "C" },
+                    { text: "Seorang delegasi yang baik", type: "D" }
+                ]
+            },
+            {
+                id: 23,
+                options: [
+                    { text: "Peraturan perlu ditolak", type: "D" },
+                    { text: "Peraturan membuat adil", type: "C" },
+                    { text: "Peraturan membuat bosan", type: "I" },
+                    { text: "Peraturan membuat aman", type: "S" }
+                ]
+            },
+            {
+                id: 24,
+                options: [
+                    { text: "Bisa diandalkan, Bisa digantungkan", type: "S" },
+                    { text: "Kreatif, Unik", type: "I" },
+                    { text: "Berorientasi kepada hasil, inti", type: "D" },
+                    { text: "Memegang teguh standard tinggi, akurat", type: "C" }
+                ]
+            }
         ];
-
-        const traitToDISC = {
-            'Ambitious': 'D', 'Friendly': 'I', 'Enthusiastic': 'I', 'Competitive': 'D',
-            'Loyal': 'S', 'Outgoing': 'I', 'Analytical': 'C', 'Spontaneous': 'I',
-            'Decisive': 'D', 'Reliable': 'S', 'Expressive': 'I', 'Logical': 'C',
-            'Patient': 'S', 'Aggressive': 'D', 'Accurate': 'C', 'Adventurous': 'I',
-            'Direct': 'D', 'Sympathetic': 'S', 'Persuasive': 'I', 'Practical': 'C',
-            'Supportive': 'S', 'Bold': 'D', 'Cautious': 'C', 'Talkative': 'I',
-            'Forceful': 'D', 'Cheerful': 'I', 'Optimistic': 'I', 'Organized': 'C',
-            'Cooperative': 'S', 'Commanding': 'D', 'Precise': 'C', 'Playful': 'I',
-            'Confident': 'D', 'Gentle': 'S', 'Charming': 'I', 'Meticulous': 'C',
-            'Dependable': 'S', 'Adventurous': 'I', 'Detailed': 'C', 'Impulsive': 'I',
-            'Powerful': 'D', 'Cheerful': 'I', 'Talkative': 'I', 'Cautious': 'C',
-            'Peacemaker': 'S', 'Risk-taker': 'D', 'Perfectionist': 'C', 'Outspoken': 'D'
-        };
 
         let currentQuestion = 0;
         let answers = {};
         let scores = { D: 0, I: 0, S: 0, C: 0 };
-        let currentToken = null;
         let candidateName = '';
-        let expiryTime = null;
-        let timerInterval = null;
+        let candidateEmail = '';
 
-        function saveToLocalStorage(key, data) {
-            localStorage.setItem(key, JSON.stringify(data));
-        }
-
-        function getFromLocalStorage(key) {
-            const data = localStorage.getItem(key);
-            return data ? JSON.parse(data) : null;
-        }
-
-        function getAllTokens() {
-            return getFromLocalStorage('discTokens') || [];
-        }
-
-        function findToken(code) {
-            const tokens = getAllTokens();
-            return tokens.find(t => t.code === code.toUpperCase());
-        }
-
-        function updateTokenStatus(code, status, results = null) {
-            const tokens = getAllTokens();
-            const tokenIndex = tokens.findIndex(t => t.code === code.toUpperCase());
-            if (tokenIndex !== -1) {
-                tokens[tokenIndex].status = status;
-                tokens[tokenIndex].completedAt = new Date().toISOString();
-                if (results) {
-                    tokens[tokenIndex].results = results;
-                }
-                saveToLocalStorage('discTokens', tokens);
-            }
-        }
-
-        function validateToken() {
-            const tokenInput = document.getElementById('tokenInput').value.trim().toUpperCase();
+        function startAssessment() {
             const nameInput = document.getElementById('nameInput').value.trim();
-            const alertDiv = document.getElementById('tokenAlert');
+            const emailInput = document.getElementById('emailInput').value.trim();
+            const alertDiv = document.getElementById('formAlert');
 
-            alertDiv.innerHTML = '';
-
-            if (!tokenInput) {
-                alertDiv.innerHTML = '<div class="alert alert-error">Please enter a token</div>';
+            if (!nameInput || !emailInput) {
+                alertDiv.innerHTML = '<div class="alert alert-error">Harap isi Nama Lengkap dan Email terlebih dahulu.</div>';
                 return;
             }
 
-            const token = findToken(tokenInput);
+            candidateName = nameInput;
+            candidateEmail = emailInput;
 
-            if (!token) {
-                alertDiv.innerHTML = '<div class="alert alert-error">❌ Invalid token. Please check and try again.</div>';
+            document.getElementById('introScreen').classList.add('hidden');
+            document.getElementById('assessment').classList.remove('hidden');
+            renderQuestion();
+        }
+
+        function renderQuestion() {
+            const q = questions[currentQuestion];
+            let html = `
+                <div class="question-container active">
+                    <div class="question-number">Kotak Soal ${currentQuestion + 1} dari ${questions.length}</div>
+                    <div class="question-text">Pilihlah 1 Paling Sesuai (M) dan 1 Kurang Sesuai (L)</div>
+                    <table class="disc-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 50px; text-align: center;">M</th>
+                                <th style="width: 50px; text-align: center;">L</th>
+                                <th style="text-align: left; padding-left: 15px;">Pernyataan</th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
+
+            q.options.forEach((opt) => {
+                html += `
+                    <tr>
+                        <td style="text-align: center;">
+                            <input type="radio" name="most_${q.id}" value="${opt.type}" 
+                            ${answers[q.id]?.most === opt.type ? 'checked' : ''} 
+                            onchange="selectAnswer(${q.id}, 'most', '${opt.type}')">
+                        </td>
+                        <td style="text-align: center;">
+                            <input type="radio" name="least_${q.id}" value="${opt.type}" 
+                            ${answers[q.id]?.least === opt.type ? 'checked' : ''} 
+                            onchange="selectAnswer(${q.id}, 'least', '${opt.type}')">
+                        </td>
+                        <td style="padding-left: 15px;">${opt.text}</td>
+                    </tr>`;
+            });
+
+            html += `</tbody></table></div>`;
+
+            document.getElementById('questionsWrapper').innerHTML = html;
+
+            const progress = ((currentQuestion + 1) / questions.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+
+            document.getElementById('prevBtn').style.display = currentQuestion > 0 ? 'block' : 'none';
+            document.getElementById('nextBtn').classList.toggle('hidden', currentQuestion === questions.length - 1);
+            document.getElementById('submitBtn').classList.toggle('hidden', currentQuestion !== questions.length - 1);
+
+            checkQuestionValidity(q.id);
+        }
+
+        function selectAnswer(questionId, type, discType) {
+            if (!answers[questionId]) answers[questionId] = {};
+
+            if (type === 'most' && answers[questionId].least === discType) {
+                alert("Pilihan Paling Sesuai (M) dan Kurang Sesuai (L) tidak boleh pada kalimat yang sama.");
+                renderQuestion();
+                return;
+            }
+            if (type === 'least' && answers[questionId].most === discType) {
+                alert("Pilihan Paling Sesuai (M) dan Kurang Sesuai (L) tidak boleh pada kalimat yang sama.");
+                renderQuestion();
                 return;
             }
 
-            const createdAt = new Date(token.createdAt);
-            const expiryAt = new Date(createdAt.getTime() + 3 * 24 * 60 * 60 * 1000);
-            const now = new Date();
+            answers[questionId][type] = discType;
+            checkQuestionValidity(questionId);
+        }
 
-            if (now > expiryAt) {
-                alertDiv.innerHTML = '<div class="alert alert-error">❌ This token has expired. The 3-day window has passed.</div>';
-                return;
+        function checkQuestionValidity(questionId) {
+            const isComplete = answers[questionId]?.most && answers[questionId]?.least;
+            document.getElementById('nextBtn').disabled = !isComplete;
+            document.getElementById('submitBtn').disabled = !isComplete;
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                renderQuestion();
+                document.querySelector('.question-container').scrollIntoView({ behavior: 'smooth' });
             }
+        }
 
-            if
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                renderQuestion();
+                document.querySelector('.question-container').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        function submitAssessment() {
+            scores = { D: 0, I: 0, S: 0, C: 0 };
+
+            questions.forEach((q) => {
+                const ans = answers[q.id];
+                if (ans && ans.most) {
+                    scores[ans.most]++;
+                }
+            });
+
+            const primaryType = Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
+
+            const results = {
+                name: candidateName,
+                email: candidateEmail,
+                scores: scores,
+                primaryType: primaryType,
+                completedAt: new Date().toISOString()
+            };
+
+            // Kirim Email Otomatis ke HR
+            sendEmailToHR(results);
+
+            // Tampilkan layar konfirmasi selesai
+            showCompletionScreen();
+        }
+
+        function sendEmailToHR(results) {
+            const templateParams = {
+                to_email: HR_EMAIL,
+                candidate_name: results.name,
+                candidate_email: results.email,
+                primary_type: results.primaryType,
+                score_d: results.scores.D,
+                score_i: results.scores.I,
+                score_s: results.scores.S,
+                score_c: results.scores.C,
+                completed_at: new Date(results.completedAt).toLocaleString('id-ID')
+            };
+
+            if (typeof emailjs !== 'undefined') {
+                emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', templateParams)
+                    .then(function(response) {
+                        console.log('SUCCESS! Email sent to HR', response.status, response.text);
+                    }, function(error) {
+                        console.log('FAILED sending email...', error);
+                    });
+            }
+        }
+
+        function showCompletionScreen() {
+            document.getElementById('assessment').classList.add('hidden');
+            document.getElementById('results').classList.add('active');
+        }
+    </script>
+</body>
+</html>
