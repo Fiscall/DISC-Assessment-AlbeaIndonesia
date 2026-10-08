@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DISC Assessment Test</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 900px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transition: width 0.3s ease;
+        }
+
+        .question-container {
+            display: none;
+        }
+
+        .question-container.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .question-number {
+            color: #667eea;
+            font-size: 0.9em;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .question-text {
+            font-size: 1.3em;
+            color: #333;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .question-type {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.95em;
+            color: #666;
+        }
+
+        .options {
+            display: grid;
+            gap: 15px;
+        }
+
+        .option {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            cursor: pointer;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            background: #fafafa;
+        }
+
+        .option:hover {
+            border-color: #667eea;
+            background: #f0f2ff;
+        }
+
+        .option input[type="radio"] {
+            cursor: pointer;
+            width: 20px;
+            height: 20px;
+        }
+
+        .option label {
+            cursor: pointer;
+            flex: 1;
+            font-size: 1em;
+            color: #333;
+        }
+
+        .option input[type="radio"]:checked + label {
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 40px;
+            justify-content: space-between;
+        }
+
+        button {
+            padding: 12px 30px;
+            font-size: 1em;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .btn-prev {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .btn-prev:hover {
+            background: #d0d0d0;
+        }
+
+        .btn-next, .btn-submit {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            flex: 1;
+        }
+
+        .btn-next:hover, .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-next:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .result-container {
+            display: none;
+            text-align: center;
+        }
+
+        .result-container.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .disc-type {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 40px;
+            border-radius: 10px;
+            font-size: 2.5em;
+            font-weight: bold;
+            margin: 30px 0;
+        }
+
+        .disc-description {
+            background: #f5f5f5;
+            padding: 30px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        .disc-description h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+
+        .disc-description p {
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .scores {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin: 30px 0;
+        }
+
+        .score-box {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .score-box h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        .score-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .btn-restart {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 40px;
+            font-size: 1.1em;
+            margin-top: 20px;
+        }
+
+        .btn-download {
+            background: #4CAF50;
+            color: white;
+            padding: 15px 40px;
+            font-size: 1.1em;
+            margin-top: 10px;
+        }
+
+        .btn-download:hover {
+            background: #45a049;
+        }
+
+        @media (max-width: 600px) {
+            .scores {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .disc-type {
+                font-size: 1.8em;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 DISC Assessment</h1>
+            <p>Discover Your Personality Type</p>
+        </div>
+
+        <div class="content">
+            <!-- Intro Section -->
+            <div id="intro" class="intro-container active">
+                <div class="disc-description">
+                    <h3>Welcome to the DISC Assessment</h3>
+                    <p><strong>What is DISC?</strong></p>
+                    <p>DISC is a behavioral assessment tool that measures four primary personality types:</p>
+                    <ul style="margin: 15px 0 15px 30px; line-height: 1.8;">
+                        <li><strong>D - Dominance:</strong> Direct, results-oriented, decisive</li>
+                        <li><strong>I - Influence:</strong> Outgoing, enthusiastic, persuasive</li>
+                        <li><strong>S - Steadiness:</strong> Reliable, patient, supportive</li>
+                        <li><strong>C - Conscientiousness:</strong> Analytical, detail-oriented, accurate</li>
+                    </ul>
+                    <p><strong>How it works:</strong> This assessment contains 24 pairs of words. For each pair, select the word that is most like you and least like you. Your responses will be analyzed to determine your DISC profile.</p>
+                </div>
+                <div class="button-group" style="margin-top: 30px;">
+                    <button class="btn-next" onclick="startAssessment()" style="flex: 1;">Start Assessment</button>
+                </div>
+            </div>
+
+            <!-- Questions Section -->
+            <div id="assessment" class="assessment-container hidden">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+
+                <div id="questionsWrapper"></div>
+
+                <div class="button-group">
+                    <button class="btn-prev" id="prevBtn" onclick="previousQuestion()" style="display:none;">← Previous</button>
+                    <button class="btn-next" id="nextBtn" onclick="nextQuestion()">Next →</button>
+                    <button class="btn-submit hidden" id="submitBtn" onclick="submitAssessment()">View Results</button>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div id="results" class="result-container">
+                <h2>Your DISC Profile</h2>
+                <div class="disc-type" id="resultType"></div>
+                <div class="scores" id="scoresDisplay"></div>
+                <div class="disc-description" id="resultDescription"></div>
+                <div class="button-group">
+                    <button class="btn-download" onclick="downloadResults()">📥 Download Result</button>
+                    <button class="btn-restart" onclick="restartAssessment()">🔄 Retake Assessment</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DISC Assessment Questions - 24 pairs
+        const questions = [
+            {
+                id: 1,
+                most: "Ambitious",
+                least: "Friendly"
+            },
+            {
+                id: 2,
+                most: "Enthusiastic",
+                least: "Competitive"
+            },
+            {
+                id: 3,
+                most: "Loyal",
+                least: "Outgoing"
+            },
+            {
+                id: 4,
+                most: "Analytical",
+                least: "Spontaneous"
+            },
+            {
+                id: 5,
+                most: "Decisive",
+                least: "Reliable"
+            },
+            {
+                id: 6,
+                most: "Expressive",
+                least: "Logical"
+            },
+            {
+                id: 7,
+                most: "Patient",
+                least: "Aggressive"
+            },
+            {
+                id: 8,
+                most: "Accurate",
+                least: "Adventurous"
+            },
+            {
+                id: 9,
+                most: "Direct",
+                least: "Sympathetic"
+            },
+            {
+                id: 10,
+                most: "Persuasive",
+                least: "Practical"
+            },
+            {
+                id: 11,
+                most: "Supportive",
+                least: "Bold"
+            },
+            {
+                id: 12,
+                most: "Cautious",
+                least: "Talkative"
+            },
+            {
+                id: 13,
+                most: "Forceful",
+                least: "Cheerful"
+            },
+            {
+                id: 14,
+                most: "Optimistic",
+                least: "Organized"
+            },
+            {
+                id: 15,
+                most: "Cooperative",
+                least: "Commanding"
+            },
+            {
+                id: 16,
+                most: "Precise",
+                least: "Playful"
+            },
+            {
+                id: 17,
+                most: "Confident",
+                least: "Gentle"
+            },
+            {
+                id: 18,
+                most: "Charming",
+                least: "Meticulous"
+            },
+            {
+                id: 19,
+                most: "Dependable",
+                least: "Adventurous"
+            },
+            {
+                id: 20,
+                most: "Detailed",
+                least: "Impulsive"
+            },
+            {
+                id: 21,
+                most: "Powerful",
+                least: "Cheerful"
+            },
+            {
+                id: 22,
+                most: "Talkative",
+                least: "Cautious"
+            },
+            {
+                id: 23,
+                most: "Peacemaker",
+                least: "Risk-taker"
+            },
+            {
+                id: 24,
+                most: "Perfectionist",
+                least: "Outspoken"
+            }
+        ];
+
+        // DISC trait mapping
+        const traitToDISC = {
+            'Ambitious': 'D', 'Friendly': 'I', 'Enthusiastic': 'I', 'Competitive': 'D',
+            'Loyal': 'S', 'Outgoing': 'I', 'Analytical': 'C', 'Spontaneous': 'I',
+            'Decisive': 'D', 'Reliable': 'S', 'Expressive': 'I', 'Logical': 'C',
+            'Patient': 'S', 'Aggressive': 'D', 'Accurate': 'C', 'Adventurous': 'I',
+            'Direct': 'D', 'Sympathetic': 'S', 'Persuasive': 'I', 'Practical': 'C',
+            'Supportive': 'S', 'Bold': 'D', 'Cautious': 'C', 'Talkative': 'I',
+            'Forceful': 'D', 'Cheerful': 'I', 'Optimistic': 'I', 'Organized': 'C',
+            'Cooperative': 'S', 'Commanding': 'D', 'Precise': 'C', 'Playful': 'I',
+            'Confident': 'D', 'Gentle': 'S', 'Charming': 'I', 'Meticulous': 'C',
+            'Dependable': 'S', 'Adventurous': 'I', 'Detailed': 'C', 'Impulsive': 'I',
+            'Powerful': 'D', 'Cheerful': 'I', 'Talkative': 'I', 'Cautious': 'C',
+            'Peacemaker': 'S', 'Risk-taker': 'D', 'Perfectionist': 'C', 'Outspoken': 'D'
+        };
+
+        // Results descriptions
+        const discDescriptions = {
+            'D': {
+                name: 'D - Dominance',
+                title: 'The Achiever',
+                description: '<strong>Direct, Results-Oriented, Decisive</strong><p>You are a natural leader who is focused on results and taking charge. You\'re driven, competitive, and confident in your abilities. You like to take control, make quick decisions, and move forward. You value efficiency and directness in communication.</p><p><strong>Strengths:</strong> Leadership, decisiveness, courage, confidence, competitive spirit</p><p><strong>Work Style:</strong> You prefer challenging tasks, autonomy, and clear goals. You motivate others through competition and results.</p><p><strong>Growth Areas:</strong> Learning to listen more, building consensus, and showing patience with others\' processes.</p>'
+            },
+            'I': {
+                name: 'I - Influence',
+                title: 'The Influencer',
+                description: '<strong>Outgoing, Enthusiastic, Persuasive</strong><p>You are a people-person who loves interacting with others. You\'re enthusiastic, optimistic, and great at inspiring and persuading people. You bring energy and excitement to any situation and prefer working with a team.</p><p><strong>Strengths:</strong> Charisma, communication, optimism, creativity, networking</p><p><strong>Work Style:</strong> You thrive in collaborative environments where you can share ideas and connect with others. You excel at presentations and building relationships.</p><p><strong>Growth Areas:</strong> Following through on details, being more organized, and focusing on tasks.</p>'
+            },
+            'S': {
+                name: 'S - Steadiness',
+                title: 'The Supporter',
+                description: '<strong>Reliable, Patient, Supportive</strong><p>You are a dependable team player who values harmony and cooperation. You\'re patient, loyal, and committed to helping others succeed. You prefer stability and consistency, and you create a calm, supportive environment.</p><p><strong>Strengths:</strong> Reliability, loyalty, patience, teamwork, stability</p><p><strong>Work Style:</strong> You\'re comfortable with established processes and prefer gradual change. You\'re great at supporting others and maintaining team harmony.</p><p><strong>Growth Areas:</strong> Being more assertive, embracing change, and taking initiative more often.</p>'
+            },
+            'C': {
+                name: 'C - Conscientiousness',
+                title: 'The Analyzer',
+                description: '<strong>Analytical, Detail-Oriented, Accurate</strong><p>You are thoughtful and deliberate, with a strong focus on accuracy and quality. You like to analyze information before making decisions and prefer doing things correctly over doing them quickly.</p><p><strong>Strengths:</strong> Analytical thinking, attention to detail, accuracy, thoroughness, problem-solving</p><p><strong>Work Style:</strong> You excel in roles requiring precision and careful analysis. You prefer working independently and having clear standards to follow.</p><p><strong>Growth Areas:</strong> Speeding up decision-making, being more flexible, and not getting too caught up in details.</p>'
+            }
+        };
+
+        let currentQuestion = 0;
+        let answers = {};
+        let scores = { D: 0, I: 0, S: 0, C: 0 };
+
+        function startAssessment() {
+            document.getElementById('intro').classList.remove('active');
+            document.getElementById('assessment').classList.remove('hidden');
+            renderQuestion();
+        }
+
+        function renderQuestion() {
+            const question = questions[currentQuestion];
+            let html = `
+                <div class="question-container active">
+                    <div class="question-number">Question ${currentQuestion + 1} of ${questions.length}</div>
+                    <div class="question-text">Select the trait that is MOST like you and LEAST like you</div>
+                    <div class="question-type">
+                        <strong>Trait Pair ${currentQuestion + 1}:</strong> "${question.most}" or "${question.least}"
+                    </div>
+                    <div class="options">
+                        <div class="option">
+                            <input type="radio" id="most_${question.id}" name="q${question.id}" value="most" 
+                                ${answers[question.id]?.most ? 'checked' : ''}>
+                            <label for="most_${question.id}">
+                                <strong>MOST like me:</strong> ${question.most}
+                            </label>
+                        </div>
+                        <div class="option">
+                            <input type="radio" id="least_${question.id}" name="q${question.id}" value="least" 
+                                ${answers[question.id]?.least ? 'checked' : ''}>
+                            <label for="least_${question.id}">
+                                <strong>LEAST like me:</strong> ${question.least}
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('questionsWrapper').innerHTML = html;
+
+            // Update progress
+            const progress = ((currentQuestion + 1) / questions.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+
+            // Update buttons
+            document.getElementById('prevBtn').style.display = currentQuestion > 0 ? 'block' : 'none';
+            document.getElementById('nextBtn').classList.toggle('hidden', currentQuestion === questions.length - 1);
+            document.getElementById('submitBtn').classList.toggle('hidden', currentQuestion !== questions.length - 1);
+
+            // Check if question is answered
+            const questionAnswered = answers[question.id];
+            document.getElementById('nextBtn').disabled = !questionAnswered;
+            document.getElementById('submitBtn').disabled = !questionAnswered;
+
+            // Add change listeners
+            document.querySelectorAll(`input[name="q${question.id}"]`).forEach(input => {
+                input.addEventListener('change', function() {
+                    if (this.value === 'most') {
+                        answers[question.id] = { most: true };
+                    } else {
+                        answers[question.id] = { least: true };
+                    }
+                    document.getElementById('nextBtn').disabled = false;
+                    document.getElementById('submitBtn').disabled = false;
+                });
+            });
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                renderQuestion();
+                document.querySelector('.question-container').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                renderQuestion();
+                document.querySelector('.question-container').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        function submitAssessment() {
+            // Calculate scores
+            scores = { D: 0, I: 0, S: 0, C: 0 };
+
+            questions.forEach((q, index) => {
+                const answer = answers[q.id];
+                if (answer?.most) {
+                    const trait = q.most;
+                    const discType = traitToDISC[trait];
+                    if (discType) scores[discType]++;
+                } else if (answer?.least) {
+                    const trait = q.least;
+                    const discType = traitToDISC[trait];
+                    if (discType) scores[discType]++;
+                }
+            });
+
+            showResults();
+        }
+
+        function showResults() {
+            document.getElementById('assessment').classList.add('hidden');
+            document.getElementById('results').classList.add('active');
+
+            // Determine primary type
+            const primaryType = Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
+            const resultData = discDescriptions[primaryType];
+
+            document.getElementById('resultType').textContent = resultData.title;
+            document.getElementById('resultDescription').innerHTML = resultData.description;
+
+            // Display scores
+            let scoresHTML = '';
+            Object.keys(scores).forEach(type => {
+                scoresHTML += `
+                    <div class="score-box">
+                        <h4>${type}</h4>
+                        <div class="score-value">${scores[type]}</div>
+                    </div>
+                `;
+            });
+            document.getElementById('scoresDisplay').innerHTML = scoresHTML;
+        }
+
+        function downloadResults() {
+            const primaryType = Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
+            const resultData = discDescriptions[primaryType];
+
+            let content = `DISC ASSESSMENT RESULTS\n`;
+            content += `========================\n\n`;
+            content += `Your Profile: ${resultData.title}\n`;
+            content += `Type: ${resultData.name}\n\n`;
+            content += `SCORES:\n`;
+            Object.keys(scores).forEach(type => {
+                content += `${type}: ${scores[type]}\n`;
+            });
+            content += `\n${resultData.description.replace(/<[^>]*>/g, '')}\n`;
+            content += `\nGenerated: ${new Date().toLocaleString()}\n`;
+
+            const element = document.createElement('a');
+            element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(content));
+            element.setAttribute('download', 'DISC-Assessment-Result.txt');
+            element.style.display = 'none';
+            document.body.appendChild(element);
+            element.click();
+            document.body.removeChild(element);
+        }
+
+        function restartAssessment() {
+            currentQuestion = 0;
+            answers = {};
+            scores = { D: 0, I: 0, S: 0, C: 0 };
+            document.getElementById('results').classList.remove('active');
+            document.getElementById('intro').classList.add('active');
+        }
+    </script>
+</body>
+</html>
