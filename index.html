@@ -6,6 +6,8 @@
     <title>DISC Assessment Test - ALBÉA INDONESIA</title>
     <!-- Include EmailJS SDK untuk Pengiriman Email Otomatis ke HR -->
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <!-- Include SheetJS (XLSX) untuk Fitur Export Excel -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script type="text/javascript">
         (function() {
             emailjs.init("YOUR_PUBLIC_KEY"); 
@@ -274,6 +276,20 @@
             flex: 1;
         }
 
+        .btn-download {
+            background: #2e7d32;
+            color: white;
+            margin-top: 20px;
+            padding: 12px 25px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-download:hover {
+            background: #1b5e20;
+        }
+
         .btn-next:disabled, .btn-submit:disabled {
             opacity: 0.5;
             cursor: not-allowed;
@@ -396,12 +412,28 @@
                     <p><strong>Terima kasih telah menyelesaikan tes DISC Assessment.</strong></p>
                     <p>Jawaban Anda telah tersimpan dan terkirim secara langsung ke email Tim HR untuk dievaluasi. Hasil bersifat rahasia dan hanya dapat diakses oleh tim Rekrutmen.</p>
                 </div>
+
+                <!-- TOMBOL DOWNLOAD EXCEL (BISA DI-ON/OFF-KAN DARI JS) -->
+                <div id="downloadContainer" class="hidden">
+                    <button class="btn-download" onclick="downloadExcelResult()">
+                        📊 Download Hasil Tes (Excel)
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
+        // =========================================================================
+        // SETTING KONFIGURASI MODUL
+        // =========================================================================
         const HR_EMAIL = "fiscall.aditama@albea-group.com";
+        
+        // SAKLAR ON/OFF DOWNLOAD EXCEL:
+        // Set 'true'  -> Tombol Download Excel akan MUNCUL untuk kandidat
+        // Set 'false' -> Tombol Download Excel akan DISEMBUNYIKAN dari kandidat
+        const ENABLE_EXCEL_DOWNLOAD = true; 
+        // =========================================================================
 
         const questions = [
             { id: 1, options: [{ text: "Mudah bergaul, ramah", type: "I" }, { text: "Penuh kepercayaan, Percaya kepada orang lain", type: "S" }, { text: "Petualang, mengambil resiko", type: "D" }, { text: "Toleran, Penuh hormat", type: "C" }] },
@@ -433,8 +465,7 @@
         let currentQuestion = 0;
         let answers = {};
         let scores = { D: 0, I: 0, S: 0, C: 0 };
-        let candidateName = '';
-        let candidateEmail = '';
+        let candidateData = {};
 
         // LOGIKA TIMER 20 MENIT (1200 DETIK)
         let totalTimeSeconds = 20 * 60;
@@ -443,20 +474,27 @@
         function startAssessment() {
             const nameInput = document.getElementById('nameInput').value.trim();
             const emailInput = document.getElementById('emailInput').value.trim();
+            const nohpInput = document.getElementById('nohpInput').value.trim();
+            const posisiInput = document.getElementById('posisiInput').value.trim();
+            const jeniskelaminInput = document.getElementById('jeniskelaminInput').value.trim();
             const alertDiv = document.getElementById('formAlert');
 
-            if (!nameInput || !emailInput) {
-                alertDiv.innerHTML = '<div class="alert alert-error">Harap isi Nama Lengkap dan Email terlebih dahulu.</div>';
+            if (!nameInput || !emailInput || !nohpInput || !posisiInput || !jeniskelaminInput) {
+                alertDiv.innerHTML = '<div class="alert alert-error">Harap lengkapi seluruh data diri Anda terlebih dahulu.</div>';
                 return;
             }
 
-            candidateName = nameInput;
-            candidateEmail = emailInput;
+            candidateData = {
+                name: nameInput,
+                email: emailInput,
+                nohp: nohpInput,
+                posisi: posisiInput,
+                jeniskelamin: jeniskelaminInput
+            };
 
             document.getElementById('introScreen').classList.add('hidden');
             document.getElementById('assessment').classList.remove('hidden');
 
-            // Memulai fungsi hitung mundur
             runTimer();
             renderQuestion();
         }
@@ -467,12 +505,10 @@
                 totalTimeSeconds--;
                 updateTimerDisplay();
 
-                // Ubah tampilan visual menjadi merah jika waktu tersisa <= 3 menit
                 if (totalTimeSeconds <= 180) {
                     document.getElementById('timerContainer').classList.add('warning');
                 }
 
-                // Otomatis kumpulkan jawaban saat waktu habis
                 if (totalTimeSeconds <= 0) {
                     clearInterval(timerInterval);
                     alert("Waktu 20 menit Anda telah habis. Sistem akan mengumpulkan jawaban Anda secara otomatis.");
@@ -591,8 +627,7 @@
             const primaryType = Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
 
             const results = {
-                name: candidateName,
-                email: candidateEmail,
+                candidate: candidateData,
                 scores: scores,
                 primaryType: primaryType,
                 completedAt: new Date().toISOString()
@@ -605,8 +640,8 @@
         function sendEmailToHR(results) {
             const templateParams = {
                 to_email: HR_EMAIL,
-                candidate_name: results.name,
-                candidate_email: results.email,
+                candidate_name: results.candidate.name,
+                candidate_email: results.candidate.email,
                 primary_type: results.primaryType,
                 score_d: results.scores.D,
                 score_i: results.scores.I,
@@ -628,6 +663,62 @@
         function showCompletionScreen() {
             document.getElementById('assessment').classList.add('hidden');
             document.getElementById('results').classList.add('active');
+
+            // Kontrol Tampilan Tombol Download Excel berdasarkan Saklar ENABLE_EXCEL_DOWNLOAD
+            if (ENABLE_EXCEL_DOWNLOAD) {
+                document.getElementById('downloadContainer').classList.remove('hidden');
+            }
+        }
+
+        // FUNGSI UTAMA UNTUK GENERATE & DOWNLOAD HASIL TES KE EXCEL (.XLSX)
+        function downloadExcelResult() {
+            const dataToExport = [
+                ["HASIL TES DISC ASSESSMENT - ALBÉA INDONESIA"],
+                [],
+                ["INFORMASI KANDIDAT"],
+                ["Nama Lengkap", candidateData.name],
+                ["Email", candidateData.email],
+                ["No HP / Whatsapp", candidateData.nohp],
+                ["Posisi Dilamar", candidateData.posisi],
+                ["Jenis Kelamin", candidateData.jeniskelamin],
+                ["Waktu Selesai", new Date().toLocaleString('id-ID')],
+                [],
+                ["RINGKASAN SKOR DISC (MOST)"],
+                ["Dominance (D)", scores.D],
+                ["Influence (I)", scores.I],
+                ["Steadiness (S)", scores.S],
+                ["Compliance (C)", scores.C],
+                ["Tipe Kepribadian Utama", scores.primaryType],
+                [],
+                ["RINCIAN JAWABAN PER SOAL"],
+                ["Kotak Soal", "Pilihan M (Most)", "Pilihan L (Least)"]
+            ];
+
+            questions.forEach((q) => {
+                const mVal = answers[q.id]?.most || "-";
+                const lVal = answers[q.id]?.least || "-";
+                dataToExport.push([`Kotak Soal ${q.id}`, mVal, lVal]);
+            });
+
+            // Membuat Worksheet dan Workbook dengan SheetJS
+            const ws = XLSX.utils.aoa_to_sheet(dataToExport);
+            
+            // Atur Lebar Kolom Excel Agar Rapi
+            ws['!cols'] = [
+                { wch: 25 },
+                { wch: 35 },
+                { wch: 20 }
+            ];
+
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Hasil DISC");
+
+            // Format Nama File Excel
+            const sanitizedName = candidateData.name.replace(/[^a-zA-Z0-9]/g, "_");
+            const filename = `Hasil_DISC_${sanitizedName}.xlsx`;
+
+            // Download File Excel
+            XLSX.writeFile(wb, filename);
         }
     </script>
 </body>
