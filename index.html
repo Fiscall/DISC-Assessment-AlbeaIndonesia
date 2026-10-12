@@ -8,8 +8,6 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script type="text/javascript">
         (function() {
-            // Inisialisasi EmailJS Public Key
-            // Masukkan Public Key akun EmailJS Anda di bawah jika ada, atau gunakan yang disiapkan
             emailjs.init("YOUR_PUBLIC_KEY"); 
         })();
     </script>
@@ -42,7 +40,7 @@
         .header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 30px 20px;
+            padding: 25px 20px;
             text-align: center;
         }
 
@@ -65,7 +63,7 @@
             height: 8px;
             background: #e0e0e0;
             border-radius: 10px;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             overflow: hidden;
         }
 
@@ -73,6 +71,33 @@
             height: 100%;
             background: linear-gradient(90deg, #667eea, #764ba2);
             transition: width 0.3s ease;
+        }
+
+        .timer-badge {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeeba;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1.1em;
+            text-align: center;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .timer-badge.warning {
+            background: #f8d7da;
+            color: #721c24;
+            border-color: #f5c6cb;
+            animation: pulse 1s infinite alternate;
+        }
+
+        @keyframes pulse {
+            from { opacity: 1; }
+            to { opacity: 0.7; }
         }
 
         .form-group {
@@ -111,6 +136,30 @@
             background: #ffebee;
             color: #c62828;
             border-left: 4px solid #c62828;
+        }
+
+        .guide-box {
+            background: #eef2ff;
+            border-left: 5px solid #667eea;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+        }
+
+        .guide-box h3 {
+            color: #3730a3;
+            margin-bottom: 12px;
+            font-size: 1.1em;
+        }
+
+        .guide-box ol, .guide-box ul {
+            margin-left: 20px;
+            line-height: 1.6;
+            color: #334155;
+        }
+
+        .guide-box li {
+            margin-bottom: 6px;
         }
 
         .question-container {
@@ -235,7 +284,7 @@
         }
 
         .hidden {
-            display: none;
+            display: none !important;
         }
     </style>
 </head>
@@ -243,15 +292,15 @@
     <div class="container">
         <div class="header">
             <h1>🎯 DISC Assessment</h1>
-            <p> ALBÉA INDONESIA - IML DISC Insights™ Analisa Sistem Kepribadian</p>
+            <p>ALBÉA INDONESIA - IML DISC Insights™ Analisa Sistem Kepribadian</p>
         </div>
 
         <div class="content">
-            <!-- Form Identitas Kandidat (Langsung Akses Tanpa Token) -->
+            <!-- Form Identitas & Panduan Mengerjakan -->
             <div id="introScreen" class="intro-screen active">
                 <div class="disc-description">
                     <h3>SELAMAT DATANG DI TES DISC ASSESSMENT</h3>
-                    <p>Silakan isi data diri Anda di bawah ini sebelum memulai tes.</p>
+                    <p>Silakan lengkapi data diri Anda di bawah ini sebelum memulai tes.</p>
                 </div>
 
                 <div id="formAlert"></div>
@@ -267,39 +316,53 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="nohp/WhatsappInput">No Hp/Whatsapp :</label>
-                    <input type="number" id="nohp/WhatsappInput" placeholder="Masukkan No Hp/Whatsapp aktif Anda" required autocomplete="off">
+                    <label for="nohpInput">No Hp/Whatsapp :</label>
+                    <input type="number" id="nohpInput" placeholder="Masukkan No Hp/Whatsapp aktif Anda" required autocomplete="off">
                 </div>
                 
-                 <div class="form-group">
+                <div class="form-group">
                     <label for="posisiInput">Posisi Yang Dilamar :</label>
                     <input type="text" id="posisiInput" placeholder="Masukkan Posisi yang Anda Lamar" required autocomplete="off">
                 </div>
 
-                 <div class="form-group">
+                <div class="form-group">
                     <label for="jeniskelaminInput">Jenis Kelamin :</label>
                     <input type="text" id="jeniskelaminInput" placeholder="Tuliskan Jenis Kelamin Anda" required autocomplete="off">
                 </div>
                 
-                <div class="disc-description">
-                    <h3>PETUNJUK PENGERJAAN:</h3>
-                    <ul style="margin: 10px 0 10px 20px; line-height: 1.6;">
-                        <li>Terdapat 24 kotak soal. Setiap kotak terdiri dari 4 kalimat/kata pendek.</li>
-                        <li>Pilih <strong>1 Opsi Paling Sesuai (M / Most)</strong> yang PALING tepat mencerminkan diri Anda.</li>
-                        <li>Pilih <strong>1 Opsi Kurang Sesuai (L / Least)</strong> yang KURANG menggambarkan diri Anda.</li>
-                        <li>Pilihan M dan L <strong>tidak boleh berada pada baris yang sama</strong>[cite: 5, 6].</li>
-                    </ul>
+                <!-- PANDUAN PENGERJAAN DETIL -->
+                <div class="guide-box">
+                    <h3>📋 PANDUAN CARA MENGERJAKAN TES:</h3>
+                    <ol>
+                        <li><strong>Jumlah Soal:</strong> Terdapat <strong>24 Kotak Soal</strong>. Masing-masing kotak memiliki 4 opsi pernyataan.</li>
+                        <li><strong>Pilih Paling Sesuai (M / Most):</strong> Pada kolom <strong>M</strong>, pilih <strong>1 pernyataan</strong> yang <u>PALING menggambarkan</u> respon/kepribadian Anda dalam situasi kerja.</li>
+                        <li><strong>Pilih Kurang Sesuai (L / Least):</strong> Pada kolom <strong>L</strong>, pilih <strong>1 pernyataan</strong> yang <u>PALING TIDAK menggambarkan</u> diri Anda.</li>
+                        <li><strong>Aturan Penting:</strong> Pilihan <strong>M</strong> dan <strong>L</strong> <u>TIDAK BOLEH berada pada baris/kalimat yang sama</u>.</li>
+                        <li><strong>Waktu Pengerjaan:</strong> Anda memiliki waktu ⏱️ <strong>20 MENIT</strong> untuk menyelesaikan seluruh 24 soal. Timer akan otomatis berjalan ketika Anda menekan tombol "Mulai Tes DISC".</li>
+                        <li><strong>Pengiriman Otomatis:</strong> Jawablah sesuai gambaran diri yang jujur dan spontan. Jika waktu habis, jawaban yang sudah terisi akan otomatis dikirimkan.</li>
+                    </ol>
                 </div>
 
                 <div class="button-group">
-                    <button class="btn-start" onclick="startAssessment()">Mulai Tes DISC</button>
+                    <button class="btn-start" onclick="startAssessment()">Mulai Tes DISC (20 Menit)</button>
                 </div>
             </div>
 
             <!-- Questions Section -->
             <div id="assessment" class="assessment-container hidden">
+                <!-- Baris Timer dan Progress -->
+                <div class="timer-badge" id="timerBadge">
+                    <span>⏱️ Sisa Waktu Pengerjaan:</span>
+                    <span id="timeDisplay" style="font-size: 1.2em;">20:00</span>
+                </div>
+
                 <div class="progress-bar">
                     <div class="progress-fill" id="progressFill"></div>
+                </div>
+
+                <!-- Petunjuk Ringkas Saat Tes Berlangsung -->
+                <div style="background: #f8fafc; padding: 10px 15px; border-radius: 6px; font-size: 0.88em; color: #475569; margin-bottom: 15px; border: 1px solid #e2e8f0;">
+                    💡 <strong>Ingat:</strong> Pilih 1 di kolom <strong>M</strong> (Paling Sesuai) dan 1 di kolom <strong>L</strong> (Kurang Sesuai). M dan L tidak boleh sebaris.
                 </div>
 
                 <div id="questionsWrapper"></div>
@@ -311,7 +374,7 @@
                 </div>
             </div>
 
-            <!-- Results Section (Konfirmasi Selesai untuk Kandidat) -->
+            <!-- Results Section -->
             <div id="results" class="result-container">
                 <div style="font-size: 4em; color: #2e7d32; margin-bottom: 10px;">✅</div>
                 <h2 style="margin-bottom: 15px; color: #333;">Tes DISC Telah Selesai!</h2>
@@ -327,7 +390,7 @@
         // Target Email HR Rekrutmen
         const HR_EMAIL = "fiscall.aditama@albea-group.com";
 
-        // Data Soal 24 Kotak IML DISC Insights Analisa Sistem Kepribadian
+        // Data Soal 24 Kotak IML DISC Insights
         const questions = [
             {
                 id: 1,
@@ -552,6 +615,10 @@
         let scores = { D: 0, I: 0, S: 0, C: 0 };
         let candidateName = '';
         let candidateEmail = '';
+        
+        // TIMER CONFIGURATION (20 MENIT = 1200 DETIK)
+        let totalTimeSeconds = 20 * 60;
+        let timerInterval = null;
 
         function startAssessment() {
             const nameInput = document.getElementById('nameInput').value.trim();
@@ -568,7 +635,38 @@
 
             document.getElementById('introScreen').classList.add('hidden');
             document.getElementById('assessment').classList.remove('hidden');
+            
+            // Jalankan Timer 20 Menit
+            startTimer();
             renderQuestion();
+        }
+
+        function startTimer() {
+            updateTimerDisplay();
+            timerInterval = setInterval(() => {
+                totalTimeSeconds--;
+                updateTimerDisplay();
+
+                // Peringatan jika waktu tinggal 3 menit
+                if (totalTimeSeconds <= 180) {
+                    document.getElementById('timerBadge').classList.add('warning');
+                }
+
+                // Jika Waktu Habis
+                if (totalTimeSeconds <= 0) {
+                    clearInterval(timerInterval);
+                    alert("Waktu 20 menit Anda telah habis. Sistem akan secara otomatis mengumpulkan jawaban Anda.");
+                    submitAssessment();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(totalTimeSeconds / 60);
+            const seconds = totalTimeSeconds % 60;
+            const formattedMinutes = String(minutes).padStart(2, '0');
+            const formattedSeconds = String(seconds).padStart(2, '0');
+            document.getElementById('timeDisplay').textContent = `${formattedMinutes}:${formattedSeconds}`;
         }
 
         function renderQuestion() {
@@ -659,6 +757,9 @@
         }
 
         function submitAssessment() {
+            // Hentikan Timer
+            if (timerInterval) clearInterval(timerInterval);
+
             scores = { D: 0, I: 0, S: 0, C: 0 };
 
             questions.forEach((q) => {
@@ -698,7 +799,6 @@
                 completed_at: new Date(results.completedAt).toLocaleString('id-ID')
             };
 
-            // Mengeksekusi EmailJS
             if (typeof emailjs !== 'undefined') {
                 emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', templateParams)
                     .then(function(response) {
