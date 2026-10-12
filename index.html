@@ -58,6 +58,48 @@
             padding: 30px;
         }
 
+        /* STYLES TIMER MUNDUR */
+        .timer-container {
+            background: #fff3cd;
+            color: #856404;
+            border: 2px solid #ffeeba;
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 1.1em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .timer-time {
+            font-size: 1.4em;
+            font-family: monospace;
+            background: #856404;
+            color: #ffffff;
+            padding: 4px 12px;
+            border-radius: 6px;
+            letter-spacing: 2px;
+        }
+
+        .timer-container.warning {
+            background: #f8d7da;
+            color: #721c24;
+            border-color: #f5c6cb;
+            animation: pulse 1s infinite alternate;
+        }
+
+        .timer-container.warning .timer-time {
+            background: #721c24;
+        }
+
+        @keyframes pulse {
+            from { opacity: 1; }
+            to { opacity: 0.75; }
+        }
+
         .progress-bar {
             width: 100%;
             height: 8px;
@@ -71,33 +113,6 @@
             height: 100%;
             background: linear-gradient(90deg, #667eea, #764ba2);
             transition: width 0.3s ease;
-        }
-
-        .timer-badge {
-            background: #fff3cd;
-            color: #856404;
-            border: 1px solid #ffeeba;
-            padding: 10px 15px;
-            border-radius: 8px;
-            font-weight: 700;
-            font-size: 1.1em;
-            text-align: center;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .timer-badge.warning {
-            background: #f8d7da;
-            color: #721c24;
-            border-color: #f5c6cb;
-            animation: pulse 1s infinite alternate;
-        }
-
-        @keyframes pulse {
-            from { opacity: 1; }
-            to { opacity: 0.7; }
         }
 
         .form-group {
@@ -152,7 +167,7 @@
             font-size: 1.1em;
         }
 
-        .guide-box ol, .guide-box ul {
+        .guide-box ol {
             margin-left: 20px;
             line-height: 1.6;
             color: #334155;
@@ -297,7 +312,7 @@
 
         <div class="content">
             <!-- Form Identitas & Panduan Mengerjakan -->
-            <div id="introScreen" class="intro-screen active">
+            <div id="introScreen" class="intro-screen">
                 <div class="disc-description">
                     <h3>SELAMAT DATANG DI TES DISC ASSESSMENT</h3>
                     <p>Silakan lengkapi data diri Anda di bawah ini sebelum memulai tes.</p>
@@ -330,16 +345,16 @@
                     <input type="text" id="jeniskelaminInput" placeholder="Tuliskan Jenis Kelamin Anda" required autocomplete="off">
                 </div>
                 
-                <!-- PANDUAN PENGERJAAN DETIL -->
+                <!-- PANDUAN CARA MENGERJAKAN -->
                 <div class="guide-box">
                     <h3>📋 PANDUAN CARA MENGERJAKAN TES:</h3>
                     <ol>
                         <li><strong>Jumlah Soal:</strong> Terdapat <strong>24 Kotak Soal</strong>. Masing-masing kotak memiliki 4 opsi pernyataan.</li>
-                        <li><strong>Pilih Paling Sesuai (M / Most):</strong> Pada kolom <strong>M</strong>, pilih <strong>1 pernyataan</strong> yang <u>PALING menggambarkan</u> respon/kepribadian Anda dalam situasi kerja.</li>
+                        <li><strong>Pilih Paling Sesuai (M / Most):</strong> Pada kolom <strong>M</strong>, pilih <strong>1 pernyataan</strong> yang <u>PALING menggambarkan</u> diri Anda.</li>
                         <li><strong>Pilih Kurang Sesuai (L / Least):</strong> Pada kolom <strong>L</strong>, pilih <strong>1 pernyataan</strong> yang <u>PALING TIDAK menggambarkan</u> diri Anda.</li>
                         <li><strong>Aturan Penting:</strong> Pilihan <strong>M</strong> dan <strong>L</strong> <u>TIDAK BOLEH berada pada baris/kalimat yang sama</u>.</li>
-                        <li><strong>Waktu Pengerjaan:</strong> Anda memiliki waktu ⏱️ <strong>20 MENIT</strong> untuk menyelesaikan seluruh 24 soal. Timer akan otomatis berjalan ketika Anda menekan tombol "Mulai Tes DISC".</li>
-                        <li><strong>Pengiriman Otomatis:</strong> Jawablah sesuai gambaran diri yang jujur dan spontan. Jika waktu habis, jawaban yang sudah terisi akan otomatis dikirimkan.</li>
+                        <li><strong>Waktu Pengerjaan:</strong> Waktu tes adalah ⏱️ <strong>20 MENIT</strong>. Timer hitung mundur akan aktif saat tombol di bawah ditekan.</li>
+                        <li><strong>Pengiriman Otomatis:</strong> Apabila waktu habis, jawaban yang sudah terisi akan otomatis terkirim.</li>
                     </ol>
                 </div>
 
@@ -350,19 +365,18 @@
 
             <!-- Questions Section -->
             <div id="assessment" class="assessment-container hidden">
-                <!-- Baris Timer dan Progress -->
-                <div class="timer-badge" id="timerBadge">
+                <!-- ELEMEN TIMER MUNDUR (HITUNG MUNDUR 20 MENIT) -->
+                <div class="timer-container" id="timerContainer">
                     <span>⏱️ Sisa Waktu Pengerjaan:</span>
-                    <span id="timeDisplay" style="font-size: 1.2em;">20:00</span>
+                    <span class="timer-time" id="timeDisplay">20:00</span>
                 </div>
 
                 <div class="progress-bar">
                     <div class="progress-fill" id="progressFill"></div>
                 </div>
 
-                <!-- Petunjuk Ringkas Saat Tes Berlangsung -->
                 <div style="background: #f8fafc; padding: 10px 15px; border-radius: 6px; font-size: 0.88em; color: #475569; margin-bottom: 15px; border: 1px solid #e2e8f0;">
-                    💡 <strong>Ingat:</strong> Pilih 1 di kolom <strong>M</strong> (Paling Sesuai) dan 1 di kolom <strong>L</strong> (Kurang Sesuai). M dan L tidak boleh sebaris.
+                    💡 <strong>Petunjuk Singkat:</strong> Pilih 1 di kolom <strong>M</strong> (Paling Sesuai) dan 1 di kolom <strong>L</strong> (Kurang Sesuai). M dan L tidak boleh berada pada baris yang sama.
                 </div>
 
                 <div id="questionsWrapper"></div>
@@ -387,227 +401,33 @@
     </div>
 
     <script>
-        // Target Email HR Rekrutmen
         const HR_EMAIL = "fiscall.aditama@albea-group.com";
 
-        // Data Soal 24 Kotak IML DISC Insights
         const questions = [
-            {
-                id: 1,
-                options: [
-                    { text: "Mudah bergaul, ramah", type: "I" },
-                    { text: "Penuh kepercayaan, Percaya kepada orang lain", type: "S" },
-                    { text: "Petualang, mengambil resiko", type: "D" },
-                    { text: "Toleran, Penuh hormat", type: "C" }
-                ]
-            },
-            {
-                id: 2,
-                options: [
-                    { text: "Yang penting adalah hasil", type: "D" },
-                    { text: "Melakukan dengan benar, ketepatan dihitung", type: "C" },
-                    { text: "Buat menjadi menyenangkan", type: "I" },
-                    { text: "Mari melakukan bersama", type: "S" }
-                ]
-            },
-            {
-                id: 3,
-                options: [
-                    { text: "Pendidikan, Kebudayaan", type: "C" },
-                    { text: "Pencapaian, Penghargaan", type: "D" },
-                    { text: "Keselamatan, Keamanan", type: "S" },
-                    { text: "Sosial Pertemuan, Kelompok", type: "I" }
-                ]
-            },
-            {
-                id: 4,
-                options: [
-                    { text: "Lembut, Pendiam", type: "S" },
-                    { text: "Optimis, Pengkhayal", type: "I" },
-                    { text: "Pusat perhatian, Mudah bersosialisasi", type: "I" },
-                    { text: "Pembuat perdamaian, Membawa ketenangan", type: "S" }
-                ]
-            },
-            {
-                id: 5,
-                options: [
-                    { text: "Akan melakukan tanpa kontrol diri", type: "I" },
-                    { text: "Akan membeli berdasarkan hasrat", type: "I" },
-                    { text: "Akan menunggu, Tidak ada tekanan", type: "S" },
-                    { text: "Akan membelanjakan apa yang saya inginkan", type: "D" }
-                ]
-            },
-            {
-                id: 6,
-                options: [
-                    { text: "Bertanggung jawab, Pendekatan langsung", type: "D" },
-                    { text: "Mudah bergaul, Antusias", type: "I" },
-                    { text: "Mudah ditebak, Konsisten", type: "S" },
-                    { text: "Waspada, Berhati-hati", type: "C" }
-                ]
-            },
-            {
-                id: 7,
-                options: [
-                    { text: "Mendorong orang lain", type: "I" },
-                    { text: "Berjuang demi kesempurnaan", type: "C" },
-                    { text: "Menjadi bagian tim", type: "S" },
-                    { text: "Ingin mencapai tujuan", type: "D" }
-                ]
-            },
-            {
-                id: 8,
-                options: [
-                    { text: "Ramah, Mudah berteman", type: "I" },
-                    { text: "Unik, Bosan dengan rutinitas", type: "I" },
-                    { text: "Aktif merubah hal-hal", type: "D" },
-                    { text: "Menginginkan sesuatu yang pasti", type: "C" }
-                ]
-            },
-            {
-                id: 9,
-                options: [
-                    { text: "Tidak mudah dikalahkan", type: "D" },
-                    { text: "Akan melakukan sesuai perintah mengikuti pimpinan", type: "S" },
-                    { text: "Riang, Ceria", type: "I" },
-                    { text: "Ingin segalanya teratur, Rapi", type: "C" }
-                ]
-            },
-            {
-                id: 10,
-                options: [
-                    { text: "Menjadi frustasi", type: "D" },
-                    { text: "Memendam perasaan dalam hati", type: "S" },
-                    { text: "Menceritakan sisi kehidupan", type: "I" },
-                    { text: "Berpihak pada oposisi", type: "C" }
-                ]
-            },
-            {
-                id: 11,
-                options: [
-                    { text: "Non Konfrontasi, Mengalah", type: "S" },
-                    { text: "Penuh dengan rincian", type: "C" },
-                    { text: "Perubahan pada menit terakhir", type: "I" },
-                    { text: "Penuntut, Perusak", type: "D" }
-                ]
-            },
-            {
-                id: 12,
-                options: [
-                    { text: "Saya akan pimpin mereka", type: "D" },
-                    { text: "Saya akan mengikuti", type: "S" },
-                    { text: "Saya akan bujuk mereka", type: "I" },
-                    { text: "Saya akan mendapatkan faktanya", type: "C" }
-                ]
-            },
-            {
-                id: 13,
-                options: [
-                    { text: "Hidup, Cerewet", type: "I" },
-                    { text: "Bekerja dengan cepat, tekun", type: "D" },
-                    { text: "Mencoba mempertahankan keseimbangan", type: "S" },
-                    { text: "Mencoba mengikuti aturan", type: "C" }
-                ]
-            },
-            {
-                id: 14,
-                options: [
-                    { text: "Menginginkan kemajuan", type: "D" },
-                    { text: "Puas dengan beberapa hal, mudah puas", type: "S" },
-                    { text: "Menggambarkan perasaan secara terbuka", type: "I" },
-                    { text: "Rendah hati, sederhana", type: "S" }
-                ]
-            },
-            {
-                id: 15,
-                options: [
-                    { text: "Memikirkan orang lain dahulu", type: "S" },
-                    { text: "Kompetitif, Menyukai tantangan", type: "D" },
-                    { text: "Optimis, Positif", type: "I" },
-                    { text: "Berpikiran logis, Sistematis", type: "C" }
-                ]
-            },
-            {
-                id: 16,
-                options: [
-                    { text: "Mengatur waktu secara efisien", type: "C" },
-                    { text: "Sering terburu-buru, Merasa tertekan", type: "D" },
-                    { text: "Hal-hal sosial merupakan hal yang penting", type: "I" },
-                    { text: "Menyelesaikan apa yang telah dimulai", type: "S" }
-                ]
-            },
-            {
-                id: 17,
-                options: [
-                    { text: "Tenang, Pendiam", type: "S" },
-                    { text: "Bahagia, Riang", type: "I" },
-                    { text: "Menyenangkan, Baik", type: "I" },
-                    { text: "Tegas, Berani", type: "D" }
-                ]
-            },
-            {
-                id: 18,
-                options: [
-                    { text: "Menyenangkan orang, Ramah", type: "I" },
-                    { text: "Tertawa keras, hidup", type: "I" },
-                    { text: "Berani, tegas", type: "D" },
-                    { text: "Tenang, Pendiam", type: "S" }
-                ]
-            },
-            {
-                id: 19,
-                options: [
-                    { text: "Menolak perubahan mendadak", type: "S" },
-                    { text: "Cenderung sering berjanji", type: "I" },
-                    { text: "Menyendiri jika dibawah tekanan", type: "C" },
-                    { text: "Tidak takut berkelahi", type: "D" }
-                ]
-            },
-            {
-                id: 20,
-                options: [
-                    { text: "Menghabiskan waktu berharga dengan orang lain", type: "I" },
-                    { text: "Merencanakan masa depan, Menyiapkan diri", type: "C" },
-                    { text: "Perjalanan menuju petualangan baru", type: "D" },
-                    { text: "Mendapat penghargaan jika mencapai tujuan", type: "D" }
-                ]
-            },
-            {
-                id: 21,
-                options: [
-                    { text: "Menginginkan kekuasaan lebih", type: "D" },
-                    { text: "Menginginkan kesempatan baru", type: "I" },
-                    { text: "Menghindari konflik apapun", type: "S" },
-                    { text: "Menginginkan arah yang jelas", type: "C" }
-                ]
-            },
-            {
-                id: 22,
-                options: [
-                    { text: "Seorang pendukung yang baik", type: "S" },
-                    { text: "Seorang pendengar yang baik", type: "S" },
-                    { text: "Seorang penganalisa yang baik", type: "C" },
-                    { text: "Seorang delegasi yang baik", type: "D" }
-                ]
-            },
-            {
-                id: 23,
-                options: [
-                    { text: "Peraturan perlu ditolak", type: "D" },
-                    { text: "Peraturan membuat adil", type: "C" },
-                    { text: "Peraturan membuat bosan", type: "I" },
-                    { text: "Peraturan membuat aman", type: "S" }
-                ]
-            },
-            {
-                id: 24,
-                options: [
-                    { text: "Bisa diandalkan, Bisa digantungkan", type: "S" },
-                    { text: "Kreatif, Unik", type: "I" },
-                    { text: "Berorientasi kepada hasil, inti", type: "D" },
-                    { text: "Memegang teguh standard tinggi, akurat", type: "C" }
-                ]
-            }
+            { id: 1, options: [{ text: "Mudah bergaul, ramah", type: "I" }, { text: "Penuh kepercayaan, Percaya kepada orang lain", type: "S" }, { text: "Petualang, mengambil resiko", type: "D" }, { text: "Toleran, Penuh hormat", type: "C" }] },
+            { id: 2, options: [{ text: "Yang penting adalah hasil", type: "D" }, { text: "Melakukan dengan benar, ketepatan dihitung", type: "C" }, { text: "Buat menjadi menyenangkan", type: "I" }, { text: "Mari melakukan bersama", type: "S" }] },
+            { id: 3, options: [{ text: "Pendidikan, Kebudayaan", type: "C" }, { text: "Pencapaian, Penghargaan", type: "D" }, { text: "Keselamatan, Keamanan", type: "S" }, { text: "Sosial Pertemuan, Kelompok", type: "I" }] },
+            { id: 4, options: [{ text: "Lembut, Pendiam", type: "S" }, { text: "Optimis, Pengkhayal", type: "I" }, { text: "Pusat perhatian, Mudah bersosialisasi", type: "I" }, { text: "Pembuat perdamaian, Membawa ketenangan", type: "S" }] },
+            { id: 5, options: [{ text: "Akan melakukan tanpa kontrol diri", type: "I" }, { text: "Akan membeli berdasarkan hasrat", type: "I" }, { text: "Akan menunggu, Tidak ada tekanan", type: "S" }, { text: "Akan membelanjakan apa yang saya inginkan", type: "D" }] },
+            { id: 6, options: [{ text: "Bertanggung jawab, Pendekatan langsung", type: "D" }, { text: "Mudah bergaul, Antusias", type: "I" }, { text: "Mudah ditebak, Konsisten", type: "S" }, { text: "Waspada, Berhati-hati", type: "C" }] },
+            { id: 7, options: [{ text: "Mendorong orang lain", type: "I" }, { text: "Berjuang demi kesempurnaan", type: "C" }, { text: "Menjadi bagian tim", type: "S" }, { text: "Ingin mencapai tujuan", type: "D" }] },
+            { id: 8, options: [{ text: "Ramah, Mudah berteman", type: "I" }, { text: "Unik, Bosan dengan rutinitas", type: "I" }, { text: "Aktif merubah hal-hal", type: "D" }, { text: "Menginginkan sesuatu yang pasti", type: "C" }] },
+            { id: 9, options: [{ text: "Tidak mudah dikalahkan", type: "D" }, { text: "Akan melakukan sesuai perintah mengikuti pimpinan", type: "S" }, { text: "Riang, Ceria", type: "I" }, { text: "Ingin segalanya teratur, Rapi", type: "C" }] },
+            { id: 10, options: [{ text: "Menjadi frustasi", type: "D" }, { text: "Memendam perasaan dalam hati", type: "S" }, { text: "Menceritakan sisi kehidupan", type: "I" }, { text: "Berpihak pada oposisi", type: "C" }] },
+            { id: 11, options: [{ text: "Non Konfrontasi, Mengalah", type: "S" }, { text: "Penuh dengan rincian", type: "C" }, { text: "Perubahan pada menit terakhir", type: "I" }, { text: "Penuntut, Perusak", type: "D" }] },
+            { id: 12, options: [{ text: "Saya akan pimpin mereka", type: "D" }, { text: "Saya akan mengikuti", type: "S" }, { text: "Saya akan bujuk mereka", type: "I" }, { text: "Saya akan mendapatkan faktanya", type: "C" }] },
+            { id: 13, options: [{ text: "Hidup, Cerewet", type: "I" }, { text: "Bekerja dengan cepat, tekun", type: "D" }, { text: "Mencoba mempertahankan keseimbangan", type: "S" }, { text: "Mencoba mengikuti aturan", type: "C" }] },
+            { id: 14, options: [{ text: "Menginginkan kemajuan", type: "D" }, { text: "Puas dengan beberapa hal, mudah puas", type: "S" }, { text: "Menggambarkan perasaan secara terbuka", type: "I" }, { text: "Rendah hati, sederhana", type: "S" }] },
+            { id: 15, options: [{ text: "Memikirkan orang lain dahulu", type: "S" }, { text: "Kompetitif, Menyukai tantangan", type: "D" }, { text: "Optimis, Positif", type: "I" }, { text: "Berpikiran logis, Sistematis", type: "C" }] },
+            { id: 16, options: [{ text: "Mengatur waktu secara efisien", type: "C" }, { text: "Sering terburu-buru, Merasa tertekan", type: "D" }, { text: "Hal-hal sosial merupakan hal yang penting", type: "I" }, { text: "Menyelesaikan apa yang telah dimulai", type: "S" }] },
+            { id: 17, options: [{ text: "Tenang, Pendiam", type: "S" }, { text: "Bahagia, Riang", type: "I" }, { text: "Menyenangkan, Baik", type: "I" }, { text: "Tegas, Berani", type: "D" }] },
+            { id: 18, options: [{ text: "Menyenangkan orang, Ramah", type: "I" }, { text: "Tertawa keras, hidup", type: "I" }, { text: "Berani, tegas", type: "D" }, { text: "Tenang, Pendiam", type: "S" }] },
+            { id: 19, options: [{ text: "Menolak perubahan mendadak", type: "S" }, { text: "Cenderung sering berjanji", type: "I" }, { text: "Menyendiri jika dibawah tekanan", type: "C" }, { text: "Tidak takut berkelahi", type: "D" }] },
+            { id: 20, options: [{ text: "Menghabiskan waktu berharga dengan orang lain", type: "I" }, { text: "Merencanakan masa depan, Menyiapkan diri", type: "C" }, { text: "Perjalanan menuju petualangan baru", type: "D" }, { text: "Mendapat penghargaan jika mencapai tujuan", type: "D" }] },
+            { id: 21, options: [{ text: "Menginginkan kekuasaan lebih", type: "D" }, { text: "Menginginkan kesempatan baru", type: "I" }, { text: "Menghindari konflik apapun", type: "S" }, { text: "Menginginkan arah yang jelas", type: "C" }] },
+            { id: 22, options: [{ text: "Seorang pendukung yang baik", type: "S" }, { text: "Seorang pendengar yang baik", type: "S" }, { text: "Seorang penganalisa yang baik", type: "C" }, { text: "Seorang delegasi yang baik", type: "D" }] },
+            { id: 23, options: [{ text: "Peraturan perlu ditolak", type: "D" }, { text: "Peraturan membuat adil", type: "C" }, { text: "Peraturan membuat bosan", type: "I" }, { text: "Peraturan membuat aman", type: "S" }] },
+            { id: 24, options: [{ text: "Bisa diandalkan, Bisa digantungkan", type: "S" }, { text: "Kreatif, Unik", type: "I" }, { text: "Berorientasi kepada hasil, inti", type: "D" }, { text: "Memegang teguh standard tinggi, akurat", type: "C" }] }
         ];
 
         let currentQuestion = 0;
@@ -615,8 +435,8 @@
         let scores = { D: 0, I: 0, S: 0, C: 0 };
         let candidateName = '';
         let candidateEmail = '';
-        
-        // TIMER CONFIGURATION (20 MENIT = 1200 DETIK)
+
+        // LOGIKA TIMER 20 MENIT (1200 DETIK)
         let totalTimeSeconds = 20 * 60;
         let timerInterval = null;
 
@@ -635,27 +455,27 @@
 
             document.getElementById('introScreen').classList.add('hidden');
             document.getElementById('assessment').classList.remove('hidden');
-            
-            // Jalankan Timer 20 Menit
-            startTimer();
+
+            // Memulai fungsi hitung mundur
+            runTimer();
             renderQuestion();
         }
 
-        function startTimer() {
+        function runTimer() {
             updateTimerDisplay();
             timerInterval = setInterval(() => {
                 totalTimeSeconds--;
                 updateTimerDisplay();
 
-                // Peringatan jika waktu tinggal 3 menit
+                // Ubah tampilan visual menjadi merah jika waktu tersisa <= 3 menit
                 if (totalTimeSeconds <= 180) {
-                    document.getElementById('timerBadge').classList.add('warning');
+                    document.getElementById('timerContainer').classList.add('warning');
                 }
 
-                // Jika Waktu Habis
+                // Otomatis kumpulkan jawaban saat waktu habis
                 if (totalTimeSeconds <= 0) {
                     clearInterval(timerInterval);
-                    alert("Waktu 20 menit Anda telah habis. Sistem akan secara otomatis mengumpulkan jawaban Anda.");
+                    alert("Waktu 20 menit Anda telah habis. Sistem akan mengumpulkan jawaban Anda secara otomatis.");
                     submitAssessment();
                 }
             }, 1000);
@@ -757,7 +577,6 @@
         }
 
         function submitAssessment() {
-            // Hentikan Timer
             if (timerInterval) clearInterval(timerInterval);
 
             scores = { D: 0, I: 0, S: 0, C: 0 };
@@ -779,10 +598,7 @@
                 completedAt: new Date().toISOString()
             };
 
-            // Kirim Laporan ke Email HR
             sendEmailToHR(results);
-
-            // Tampilkan Layar Konfirmasi Selesai
             showCompletionScreen();
         }
 
