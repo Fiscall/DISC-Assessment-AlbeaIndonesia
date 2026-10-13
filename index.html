@@ -330,7 +330,7 @@
             <!-- Form Identitas & Panduan Mengerjakan -->
             <div id="introScreen" class="intro-screen">
                 <div class="disc-description">
-                    <h3>SELAMAT DATANG DI TES DISC ASSESSMENT</h3>
+                    <h3>SELAMAT DATANG DI DISC ASSESSMENT</h3>
                     <p>Silakan lengkapi data diri Anda di bawah ini sebelum memulai tes.</p>
                 </div>
 
@@ -357,9 +357,13 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="jeniskelaminInput">Jenis Kelamin :</label>
-                    <input type="text" id="jeniskelaminInput" placeholder="Tuliskan Jenis Kelamin Anda" required autocomplete="off">
-                </div>
+    <label for="jeniskelaminInput">Jenis Kelamin :</label>
+    <select id="jeniskelaminInput" required style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1em; background-color: white; transition: border-color 0.3s; cursor: pointer;">
+        <option value="" disabled selected>-- Pilih Jenis Kelamin --</option>
+        <option value="Laki-laki">Laki-laki</option>
+        <option value="Perempuan">Perempuan</option>
+    </select>
+</div>
                 
                 <!-- PANDUAN CARA MENGERJAKAN -->
                 <div class="guide-box">
