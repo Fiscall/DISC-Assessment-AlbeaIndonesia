@@ -128,16 +128,17 @@
             color: #333;
         }
 
-        .form-group input {
+        .form-group input, .form-group select {
             width: 100%;
             padding: 12px;
             border: 2px solid #e0e0e0;
             border-radius: 8px;
             font-size: 1em;
+            background-color: white;
             transition: border-color 0.3s;
         }
 
-        .form-group input:focus {
+        .form-group input:focus, .form-group select:focus {
             outline: none;
             border-color: #667eea;
         }
@@ -177,6 +178,14 @@
 
         .guide-box li {
             margin-bottom: 6px;
+        }
+
+        .example-box {
+            background: #f8fafc;
+            border: 2px dashed #667eea;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
         }
 
         .question-container {
@@ -270,7 +279,7 @@
             color: #333;
         }
 
-        .btn-next, .btn-submit, .btn-start {
+        .btn-next, .btn-submit, .btn-start, .btn-ready {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             flex: 1;
@@ -290,7 +299,7 @@
             background: #1b5e20;
         }
 
-        .btn-next:disabled, .btn-submit:disabled {
+        .btn-next:disabled, .btn-submit:disabled, .btn-ready:disabled {
             opacity: 0.5;
             cursor: not-allowed;
         }
@@ -327,7 +336,7 @@
         </div>
 
         <div class="content">
-            <!-- Form Identitas & Panduan Mengerjakan -->
+            <!-- TAHAP 1: Form Identitas Kandidat -->
             <div id="introScreen" class="intro-screen">
                 <div class="disc-description">
                     <h3>SELAMAT DATANG DI DISC ASSESSMENT</h3>
@@ -357,15 +366,21 @@
                 </div>
 
                 <div class="form-group">
-    <label for="jeniskelaminInput">Jenis Kelamin :</label>
-    <select id="jeniskelaminInput" required style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1em; background-color: white; transition: border-color 0.3s; cursor: pointer;">
-        <option value="" disabled selected>-- Pilih Jenis Kelamin --</option>
-        <option value="Laki-laki">Laki-laki</option>
-        <option value="Perempuan">Perempuan</option>
-    </select>
-</div>
-                
-                <!-- PANDUAN CARA MENGERJAKAN -->
+                    <label for="jeniskelaminInput">Jenis Kelamin :</label>
+                    <select id="jeniskelaminInput" required style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1em; background-color: white; transition: border-color 0.3s; cursor: pointer;">
+                        <option value="" disabled selected>-- Pilih Jenis Kelamin --</option>
+                        <option value="Laki-laki">Laki-laki</option>
+                        <option value="Perempuan">Perempuan</option>
+                    </select>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn-start" onclick="goToExampleScreen()">Lanjut ke Contoh Soal →</button>
+                </div>
+            </div>
+
+            <!-- TAHAP 2: Halaman Contoh Soal & Panduan Pengerjaan -->
+            <div id="exampleScreen" class="example-screen hidden">
                 <div class="guide-box">
                     <h3>📋 PANDUAN CARA MENGERJAKAN TES:</h3>
                     <ol>
@@ -373,17 +388,71 @@
                         <li><strong>Pilih Paling Sesuai (M / Most):</strong> Pada kolom <strong>M</strong>, pilih <strong>1 pernyataan</strong> yang <u>PALING menggambarkan</u> diri Anda.</li>
                         <li><strong>Pilih Kurang Sesuai (L / Least):</strong> Pada kolom <strong>L</strong>, pilih <strong>1 pernyataan</strong> yang <u>PALING TIDAK menggambarkan</u> diri Anda.</li>
                         <li><strong>Aturan Penting:</strong> Pilihan <strong>M</strong> dan <strong>L</strong> <u>TIDAK BOLEH berada pada baris/kalimat yang sama</u>.</li>
-                        <li><strong>Waktu Pengerjaan:</strong> Waktu tes adalah ⏱️ <strong>20 MENIT</strong>. Timer hitung mundur akan aktif saat tombol di bawah ditekan.</li>
-                        <li><strong>Pengiriman Otomatis:</strong> Apabila waktu habis, jawaban yang sudah terisi akan otomatis terkirim.</li>
+                        <li><strong>Waktu Pengerjaan:</strong> Waktu tes adalah ⏱️ <strong>20 MENIT</strong>. Timer hitung mundur akan otomatis aktif setelah Anda menekan tombol "Saya Siap, Mulai Tes DISC".</li>
                     </ol>
                 </div>
 
+                <div class="example-box">
+                    <h4 style="color: #667eea; margin-bottom: 8px;">💡 SIMULASI / CONTOH CARA MENGERJAKAN:</h4>
+                    <p style="font-size: 0.95em; color: #475569; margin-bottom: 15px;">Silakan coba pilih 1 opsi pada kolom <strong>M</strong> dan 1 opsi pada kolom <strong>L</strong> di bawah ini untuk memahami aturan main sebelum memulai tes sesungguhnya.</p>
+
+                    <table class="disc-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 50px; text-align: center;">M</th>
+                                <th style="width: 50px; text-align: center;">L</th>
+                                <th style="text-align: left; padding-left: 15px;">Pernyataan Contoh</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="text-align: center;">
+                                    <input type="radio" name="sample_m" value="1" onchange="checkSampleValidity()">
+                                </td>
+                                <td style="text-align: center;">
+                                    <input type="radio" name="sample_l" value="1" onchange="checkSampleValidity()">
+                                </td>
+                                <td style="padding-left: 15px;">Ramah, mudah bergaul dengan siapa saja</td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: center;">
+                                    <input type="radio" name="sample_m" value="2" onchange="checkSampleValidity()">
+                                </td>
+                                <td style="text-align: center;">
+                                    <input type="radio" name="sample_l" value="2" onchange="checkSampleValidity()">
+                                </td>
+                                <td style="padding-left: 15px;">Tegas, fokus pada pencapaian target kerja</td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: center;">
+                                    <input type="radio" name="sample_m" value="3" onchange="checkSampleValidity()">
+                                </td>
+                                <td style="text-align: center;">
+                                    <input type="radio" name="sample_l" value="3" onchange="checkSampleValidity()">
+                                </td>
+                                <td style="padding-left: 15px;">Sabar, menyukai kerjasama tim yang harmonis</td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: center;">
+                                    <input type="radio" name="sample_m" value="4" onchange="checkSampleValidity()">
+                                </td>
+                                <td style="text-align: center;">
+                                    <input type="radio" name="sample_l" value="4" onchange="checkSampleValidity()">
+                                </td>
+                                <td style="padding-left: 15px;">Teliti, selalu mengikuti prosedur standar</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div id="sampleFeedback" style="margin-top: 12px; font-size: 0.9em; font-weight: 600; color: #dc2626;"></div>
+                </div>
+
                 <div class="button-group">
-                    <button class="btn-start" onclick="startAssessment()">Mulai Tes DISC (20 Menit)</button>
+                    <button class="btn-prev" onclick="backToIntro()">← Kembali Ke Data Diri</button>
+                    <button class="btn-ready" id="readyBtn" onclick="startAssessment()" disabled>Saya Siap, Mulai Tes DISC (20 Menit) 🚀</button>
                 </div>
             </div>
 
-            <!-- Questions Section -->
+            <!-- TAHAP 3: Halaman Soal DISC Utama -->
             <div id="assessment" class="assessment-container hidden">
                 <!-- ELEMEN TIMER MUNDUR (HITUNG MUNDUR 20 MENIT) -->
                 <div class="timer-container" id="timerContainer">
@@ -408,7 +477,7 @@
                 </div>
             </div>
 
-            <!-- Results Section -->
+            <!-- TAHAP 4: Halaman Hasil / Konfirmasi Selesai -->
             <div id="results" class="result-container">
                 <div style="font-size: 4em; color: #2e7d32; margin-bottom: 10px;">✅</div>
                 <h2 style="margin-bottom: 15px; color: #333;">Tes DISC Telah Selesai!</h2>
@@ -475,16 +544,17 @@
         let totalTimeSeconds = 20 * 60;
         let timerInterval = null;
 
-        function startAssessment() {
+        // FUNGSI BERPINDAH KE HALAMAN CONTOH SOAL
+        function goToExampleScreen() {
             const nameInput = document.getElementById('nameInput').value.trim();
             const emailInput = document.getElementById('emailInput').value.trim();
             const nohpInput = document.getElementById('nohpInput').value.trim();
             const posisiInput = document.getElementById('posisiInput').value.trim();
-            const jeniskelaminInput = document.getElementById('jeniskelaminInput').value.trim();
+            const jeniskelaminSelect = document.getElementById('jeniskelaminInput').value;
             const alertDiv = document.getElementById('formAlert');
 
-            if (!nameInput || !emailInput || !nohpInput || !posisiInput || !jeniskelaminInput) {
-                alertDiv.innerHTML = '<div class="alert alert-error">Harap lengkapi seluruh data diri Anda terlebih dahulu.</div>';
+            if (!nameInput || !emailInput || !nohpInput || !posisiInput || !jeniskelaminSelect) {
+                alertDiv.innerHTML = '<div class="alert alert-error">Harap lengkapi seluruh data diri Anda dan pilih Jenis Kelamin terlebih dahulu.</div>';
                 return;
             }
 
@@ -493,10 +563,44 @@
                 email: emailInput,
                 nohp: nohpInput,
                 posisi: posisiInput,
-                jeniskelamin: jeniskelaminInput
+                jeniskelamin: jeniskelaminSelect
             };
 
             document.getElementById('introScreen').classList.add('hidden');
+            document.getElementById('exampleScreen').classList.remove('hidden');
+        }
+
+        function backToIntro() {
+            document.getElementById('exampleScreen').classList.add('hidden');
+            document.getElementById('introScreen').classList.remove('hidden');
+        }
+
+        // VALIDASI CONTOH SOAL (SIMULASI PENGERJAKAN)
+        function checkSampleValidity() {
+            const mChecked = document.querySelector('input[name="sample_m"]:checked');
+            const lChecked = document.querySelector('input[name="sample_l"]:checked');
+            const readyBtn = document.getElementById('readyBtn');
+            const feedback = document.getElementById('sampleFeedback');
+
+            if (mChecked && lChecked) {
+                if (mChecked.value === lChecked.value) {
+                    feedback.textContent = "❌ Pilihan M dan L tidak boleh berada pada baris yang sama. Silakan ubah salah satu.";
+                    readyBtn.disabled = true;
+                } else {
+                    feedback.style.color = "#16a34a";
+                    feedback.textContent = "✅ Pilihan contoh Anda sudah benar! Anda telah memahami cara kerja tes ini.";
+                    readyBtn.disabled = false;
+                }
+            } else {
+                feedback.style.color = "#dc2626";
+                feedback.textContent = "Silakan pilih 1 opsi pada M dan 1 opsi pada L untuk mencoba contoh soal.";
+                readyBtn.disabled = true;
+            }
+        }
+
+        // MEMULAI TES SESUNGGUHNYA (DENGAN TIMER 20 MENIT)
+        function startAssessment() {
+            document.getElementById('exampleScreen').classList.add('hidden');
             document.getElementById('assessment').classList.remove('hidden');
 
             runTimer();
@@ -515,215 +619,4 @@
 
                 if (totalTimeSeconds <= 0) {
                     clearInterval(timerInterval);
-                    alert("Waktu 20 menit Anda telah habis. Sistem akan mengumpulkan jawaban Anda secara otomatis.");
-                    submitAssessment();
-                }
-            }, 1000);
-        }
-
-        function updateTimerDisplay() {
-            const minutes = Math.floor(totalTimeSeconds / 60);
-            const seconds = totalTimeSeconds % 60;
-            const formattedMinutes = String(minutes).padStart(2, '0');
-            const formattedSeconds = String(seconds).padStart(2, '0');
-            document.getElementById('timeDisplay').textContent = `${formattedMinutes}:${formattedSeconds}`;
-        }
-
-        function renderQuestion() {
-            const q = questions[currentQuestion];
-            let html = `
-                <div class="question-container active">
-                    <div class="question-number">Kotak Soal ${currentQuestion + 1} dari ${questions.length}</div>
-                    <div class="question-text">Pilihlah 1 Paling Sesuai (M) dan 1 Kurang Sesuai (L)</div>
-                    <table class="disc-table">
-                        <thead>
-                            <tr>
-                                <th style="width: 50px; text-align: center;">M</th>
-                                <th style="width: 50px; text-align: center;">L</th>
-                                <th style="text-align: left; padding-left: 15px;">Pernyataan</th>
-                            </tr>
-                        </thead>
-                        <tbody>`;
-
-            q.options.forEach((opt) => {
-                html += `
-                    <tr>
-                        <td style="text-align: center;">
-                            <input type="radio" name="most_${q.id}" value="${opt.type}" 
-                            ${answers[q.id]?.most === opt.type ? 'checked' : ''} 
-                            onchange="selectAnswer(${q.id}, 'most', '${opt.type}')">
-                        </td>
-                        <td style="text-align: center;">
-                            <input type="radio" name="least_${q.id}" value="${opt.type}" 
-                            ${answers[q.id]?.least === opt.type ? 'checked' : ''} 
-                            onchange="selectAnswer(${q.id}, 'least', '${opt.type}')">
-                        </td>
-                        <td style="padding-left: 15px;">${opt.text}</td>
-                    </tr>`;
-            });
-
-            html += `</tbody></table></div>`;
-
-            document.getElementById('questionsWrapper').innerHTML = html;
-
-            const progress = ((currentQuestion + 1) / questions.length) * 100;
-            document.getElementById('progressFill').style.width = progress + '%';
-
-            document.getElementById('prevBtn').style.display = currentQuestion > 0 ? 'block' : 'none';
-            document.getElementById('nextBtn').classList.toggle('hidden', currentQuestion === questions.length - 1);
-            document.getElementById('submitBtn').classList.toggle('hidden', currentQuestion !== questions.length - 1);
-
-            checkQuestionValidity(q.id);
-        }
-
-        function selectAnswer(questionId, type, discType) {
-            if (!answers[questionId]) answers[questionId] = {};
-
-            if (type === 'most' && answers[questionId].least === discType) {
-                alert("Pilihan Paling Sesuai (M) dan Kurang Sesuai (L) tidak boleh pada kalimat yang sama.");
-                renderQuestion();
-                return;
-            }
-            if (type === 'least' && answers[questionId].most === discType) {
-                alert("Pilihan Paling Sesuai (M) dan Kurang Sesuai (L) tidak boleh pada kalimat yang sama.");
-                renderQuestion();
-                return;
-            }
-
-            answers[questionId][type] = discType;
-            checkQuestionValidity(questionId);
-        }
-
-        function checkQuestionValidity(questionId) {
-            const isComplete = answers[questionId]?.most && answers[questionId]?.least;
-            document.getElementById('nextBtn').disabled = !isComplete;
-            document.getElementById('submitBtn').disabled = !isComplete;
-        }
-
-        function nextQuestion() {
-            if (currentQuestion < questions.length - 1) {
-                currentQuestion++;
-                renderQuestion();
-                document.querySelector('.question-container').scrollIntoView({ behavior: 'smooth' });
-            }
-        }
-
-        function previousQuestion() {
-            if (currentQuestion > 0) {
-                currentQuestion--;
-                renderQuestion();
-                document.querySelector('.question-container').scrollIntoView({ behavior: 'smooth' });
-            }
-        }
-
-        function submitAssessment() {
-            if (timerInterval) clearInterval(timerInterval);
-
-            scores = { D: 0, I: 0, S: 0, C: 0 };
-
-            questions.forEach((q) => {
-                const ans = answers[q.id];
-                if (ans && ans.most) {
-                    scores[ans.most]++;
-                }
-            });
-
-            const primaryType = Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
-
-            const results = {
-                candidate: candidateData,
-                scores: scores,
-                primaryType: primaryType,
-                completedAt: new Date().toISOString()
-            };
-
-            sendEmailToHR(results);
-            showCompletionScreen();
-        }
-
-        function sendEmailToHR(results) {
-            const templateParams = {
-                to_email: HR_EMAIL,
-                candidate_name: results.candidate.name,
-                candidate_email: results.candidate.email,
-                primary_type: results.primaryType,
-                score_d: results.scores.D,
-                score_i: results.scores.I,
-                score_s: results.scores.S,
-                score_c: results.scores.C,
-                completed_at: new Date(results.completedAt).toLocaleString('id-ID')
-            };
-
-            if (typeof emailjs !== 'undefined') {
-                emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', templateParams)
-                    .then(function(response) {
-                        console.log('BERHASIL! Laporan terkirim ke HR:', response.status, response.text);
-                    }, function(error) {
-                        console.log('GAGAL mengirim email...', error);
-                    });
-            }
-        }
-
-        function showCompletionScreen() {
-            document.getElementById('assessment').classList.add('hidden');
-            document.getElementById('results').classList.add('active');
-
-            // Kontrol Tampilan Tombol Download Excel berdasarkan Saklar ENABLE_EXCEL_DOWNLOAD
-            if (ENABLE_EXCEL_DOWNLOAD) {
-                document.getElementById('downloadContainer').classList.remove('hidden');
-            }
-        }
-
-        // FUNGSI UTAMA UNTUK GENERATE & DOWNLOAD HASIL TES KE EXCEL (.XLSX)
-        function downloadExcelResult() {
-            const dataToExport = [
-                ["HASIL TES DISC ASSESSMENT - ALBÉA INDONESIA"],
-                [],
-                ["INFORMASI KANDIDAT"],
-                ["Nama Lengkap", candidateData.name],
-                ["Email", candidateData.email],
-                ["No HP / Whatsapp", candidateData.nohp],
-                ["Posisi Dilamar", candidateData.posisi],
-                ["Jenis Kelamin", candidateData.jeniskelamin],
-                ["Waktu Selesai", new Date().toLocaleString('id-ID')],
-                [],
-                ["RINGKASAN SKOR DISC (MOST)"],
-                ["Dominance (D)", scores.D],
-                ["Influence (I)", scores.I],
-                ["Steadiness (S)", scores.S],
-                ["Compliance (C)", scores.C],
-                ["Tipe Kepribadian Utama", scores.primaryType],
-                [],
-                ["RINCIAN JAWABAN PER SOAL"],
-                ["Kotak Soal", "Pilihan M (Most)", "Pilihan L (Least)"]
-            ];
-
-            questions.forEach((q) => {
-                const mVal = answers[q.id]?.most || "-";
-                const lVal = answers[q.id]?.least || "-";
-                dataToExport.push([`Kotak Soal ${q.id}`, mVal, lVal]);
-            });
-
-            // Membuat Worksheet dan Workbook dengan SheetJS
-            const ws = XLSX.utils.aoa_to_sheet(dataToExport);
-            
-            // Atur Lebar Kolom Excel Agar Rapi
-            ws['!cols'] = [
-                { wch: 25 },
-                { wch: 35 },
-                { wch: 20 }
-            ];
-
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Hasil DISC");
-
-            // Format Nama File Excel
-            const sanitizedName = candidateData.name.replace(/[^a-zA-Z0-9]/g, "_");
-            const filename = `Hasil_DISC_${sanitizedName}.xlsx`;
-
-            // Download File Excel
-            XLSX.writeFile(wb, filename);
-        }
-    </script>
-</body>
-</html>
+                    alert("Waktu
