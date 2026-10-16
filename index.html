@@ -18,6 +18,11 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            /* 1. Mencegah Seleksi Teks/Kalimat di Seluruh Halaman */
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
         }
 
         body {
@@ -37,6 +42,7 @@
             max-width: 900px;
             width: 100%;
             overflow: hidden;
+            position: relative;
         }
 
         .header {
@@ -60,7 +66,6 @@
             padding: 30px;
         }
 
-        /* STYLES TIMER MUNDUR */
         .timer-container {
             background: #fff3cd;
             color: #856404;
@@ -136,6 +141,11 @@
             font-size: 1em;
             background-color: white;
             transition: border-color 0.3s;
+            /* Mengizinkan input teks bisa diketik tanpa mengganggu seleksi global */
+            -webkit-user-select: text;
+            -moz-user-select: text;
+            -ms-user-select: text;
+            user-select: text;
         }
 
         .form-group input:focus, .form-group select:focus {
@@ -299,7 +309,7 @@
             background: #1b5e20;
         }
 
-        .btn-next:disabled, .btn-submit:disabled, .btn-ready:disabled {
+        .btn-next:disabled, .btn-submit:disabled, .btn-ready:disabled, button:disabled {
             opacity: 0.5;
             cursor: not-allowed;
         }
@@ -326,9 +336,33 @@
         .hidden {
             display: none !important;
         }
+
+        /* BANNER SHIELD JIKA SCREENSHOT TERDETEKSI */
+        #screenshotShield {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: #000000;
+            color: #ffffff;
+            z-index: 99999;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5em;
+            font-weight: bold;
+            text-align: center;
+            padding: 20px;
+        }
     </style>
 </head>
-<body>
+<body oncontextmenu="return false;">
+    <!-- SHIELD UNTUK MENCEGAH SCREENSHOT VIA PRTSCN -->
+    <div id="screenshotShield">
+        ⚠️ DILARANG MELAKUKAN SCREENSHOT SESAAT TES BERLANGSUNG!
+    </div>
+
     <div class="container">
         <div class="header">
             <h1>🎯 DISC Assessment</h1>
@@ -336,8 +370,27 @@
         </div>
 
         <div class="content">
+            <!-- TAHAP 0: Halaman Akses Token -->
+            <div id="tokenScreen">
+                <div class="disc-description">
+                    <h3>VERIFIKASI KODE AKSES / TOKEN TES</h3>
+                    <p>Silakan masukkan Kode Akses / Token unik yang telah diberikan oleh Tim HR Rekrutmen untuk memulai tes.</p>
+                </div>
+
+                <div id="tokenAlert"></div>
+
+                <div class="form-group">
+                    <label for="tokenInput">Masukkan Kode Akses / Token :</label>
+                    <input type="text" id="tokenInput" placeholder="Contoh: ALBEA-XXXX" required style="text-transform: uppercase; font-weight: 700; letter-spacing: 2px;" autocomplete="off">
+                </div>
+
+                <div class="button-group">
+                    <button class="btn-start" id="verifyTokenBtn" onclick="verifyToken()">Verifikasi Token & Lanjut →</button>
+                </div>
+            </div>
+
             <!-- TAHAP 1: Form Identitas Kandidat -->
-            <div id="introScreen" class="intro-screen">
+            <div id="introScreen" class="intro-screen hidden">
                 <div class="disc-description">
                     <h3>SELAMAT DATANG DI DISC ASSESSMENT</h3>
                     <p>Silakan lengkapi data diri Anda di bawah ini sebelum melanjutkan ke contoh soal.</p>
@@ -388,6 +441,7 @@
                         <li><strong>Pilih Paling Sesuai (M / Most):</strong> Pada kolom <strong>M</strong>, pilih <strong>1 pernyataan</strong> yang <u>PALING menggambarkan</u> diri Anda.</li>
                         <li><strong>Pilih Kurang Sesuai (L / Least):</strong> Pada kolom <strong>L</strong>, pilih <strong>1 pernyataan</strong> yang <u>PALING TIDAK menggambarkan</u> diri Anda.</li>
                         <li><strong>Aturan Penting:</strong> Pilihan <strong>M</strong> dan <strong>L</strong> <u>TIDAK BOLEH berada pada baris/kalimat yang sama</u>.</li>
+                        <li><strong>Aturan Keamanan:</strong> Dilarang berpindah tab/aplikasi, mengambil screenshot, atau melakukan copy-paste selama tes berlangsung.</li>
                         <li><strong>Waktu Pengerjaan:</strong> Waktu tes adalah ⏱️ <strong>7 MENIT</strong>. Timer hitung mundur akan otomatis aktif setelah Anda menekan tombol "Saya Siap, Mulai Tes DISC".</li>
                     </ol>
                 </div>
@@ -454,7 +508,6 @@
 
             <!-- TAHAP 3: Halaman Soal DISC Utama -->
             <div id="assessment" class="assessment-container hidden">
-                <!-- ELEMEN TIMER MUNDUR (HITUNG MUNDUR 7 MENIT) -->
                 <div class="timer-container" id="timerContainer">
                     <span>⏱️ Sisa Waktu Pengerjaan:</span>
                     <span class="timer-time" id="timeDisplay">07:00</span>
@@ -486,7 +539,6 @@
                     <p>Jawaban Anda telah tersimpan dan terkirim secara langsung ke email Tim HR untuk dievaluasi. Hasil bersifat rahasia dan hanya dapat diakses oleh tim Rekrutmen.</p>
                 </div>
 
-                <!-- TOMBOL DOWNLOAD EXCEL (BISA DI-ON/OFF-KAN DARI JS) -->
                 <div id="downloadContainer" class="hidden">
                     <button class="btn-download" onclick="downloadExcelResult()">
                         📊 Download Hasil Tes (Excel)
@@ -501,11 +553,9 @@
         // SETTING KONFIGURASI MODUL
         // =========================================================================
         const HR_EMAIL = "fiscall.aditama@albea-group.com";
-        
-        // SAKLAR ON/OFF DOWNLOAD EXCEL:
-        // Set 'true'  -> Tombol Download Excel akan MUNCUL untuk kandidat
-        // Set 'false' -> Tombol Download Excel akan DISEMBUNYIKAN dari kandidat
+        const GOOGLE_SHEETS_SCRIPT_URL = "PASANG_URL_WEB_APP_GOOGLE_SCRIPT_DI_SINI"; // Tempelkan URL Web App dari Google Script
         const ENABLE_EXCEL_DOWNLOAD = true; 
+        const MAX_TAB_SWITCH_ALLOWED = 3; // Batas maksimal pindah tab sebelum otomatis submitted
         // =========================================================================
 
         const questions = [
@@ -539,12 +589,132 @@
         let answers = {};
         let scores = { D: 0, I: 0, S: 0, C: 0 };
         let candidateData = {};
+        let activeToken = "";
 
-        // LOGIKA TIMER 7 MENIT (420 DETIK)
         let totalTimeSeconds = 7 * 60;
         let timerInterval = null;
+        let tabSwitchCount = 0;
+        let testStarted = false;
 
-        // FUNGSI BERPINDAH KE HALAMAN CONTOH SOAL
+        // =========================================================================
+        // IMPLEMENTASI FITUR SECURITY & ANTI-CHEATING
+        // =========================================================================
+
+        // 1. MEMBLOKIR KLIK KANAN DARI SELURUH HALAMAN
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            return false;
+        });
+
+        // 2. MEMBLOKIR COPY, CUT, PASTE, DAN DRAG SELEKSI TEKS
+        ['copy', 'cut', 'paste', 'selectstart', 'dragstart'].forEach(function(evt) {
+            document.addEventListener(evt, function(e) {
+                e.preventDefault();
+                return false;
+            });
+        });
+
+        // 3. MEMBLOKIR TOMBOL KEYBOARD SHORTCUT (PrintScreen, F12, Ctrl+Shift+I, Ctrl+C, Ctrl+V, dll)
+        document.addEventListener('keydown', function(e) {
+            // Blokir F12, Ctrl+U (Inspect Element)
+            if (e.keyCode === 123 || (e.ctrlKey && e.keyCode === 85)) {
+                e.preventDefault();
+                return false;
+            }
+            // Blokir Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+Shift+C (DevTools)
+            if (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) {
+                e.preventDefault();
+                return false;
+            }
+            // Blokir Ctrl+C, Ctrl+V, Ctrl+X, Ctrl+A, Ctrl+S, Ctrl+P
+            if (e.ctrlKey && (e.keyCode === 67 || e.keyCode === 86 || e.keyCode === 88 || e.keyCode === 65 || e.keyCode === 83 || e.keyCode === 80)) {
+                e.preventDefault();
+                return false;
+            }
+            // Blokir PrintScreen
+            if (e.key === 'PrintScreen' || e.keyCode === 44) {
+                e.preventDefault();
+                triggerScreenshotShield();
+                return false;
+            }
+        });
+
+        // Sembunyikan konten layar jika tombol PrintScreen ditekan
+        function triggerScreenshotShield() {
+            const shield = document.getElementById('screenshotShield');
+            shield.style.display = 'flex';
+            setTimeout(() => {
+                shield.style.display = 'none';
+            }, 3000);
+        }
+
+        // 4. DETEKSI PINDAH TAB / APPLIKASI BROWSER DENGAN SANKSI BERINGKAT
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden && testStarted) {
+                handleTabSwitch();
+            }
+        });
+
+        window.addEventListener('blur', function() {
+            if (testStarted) {
+                handleTabSwitch();
+            }
+        });
+
+        function handleTabSwitch() {
+            tabSwitchCount++;
+            if (tabSwitchCount < MAX_TAB_SWITCH_ALLOWED) {
+                alert(`⚠️ PERINGATAN REKRUTMEN (${tabSwitchCount}/${MAX_TAB_SWITCH_ALLOWED})!\n\nAnda terdeteksi meninggalkan halaman/tab tes. Dilarang berpindah tab atau membuka aplikasi lain selama tes berlangsung!\n\nJika mencapai ${MAX_TAB_SWITCH_ALLOWED} kali, tes akan dihentikan secara otomatis.`);
+            } else {
+                alert(`❌ PELANGGARAN BATAS MAKSIMAL!\n\nAnda telah berpindah tab sebanyak ${tabSwitchCount} kali. Tes dihentikan secara otomatis dan jawaban Anda akan langsung dikumpulkan.`);
+                submitAssessment();
+            }
+        }
+
+        // =========================================================================
+        // LOGIKA PENGERJAKAN TES DISC
+        // =========================================================================
+
+        function verifyToken() {
+            const tokenInput = document.getElementById('tokenInput').value.trim();
+            const alertDiv = document.getElementById('tokenAlert');
+            const btn = document.getElementById('verifyTokenBtn');
+
+            if (!tokenInput) {
+                alertDiv.innerHTML = '<div class="alert alert-error">Harap masukkan Kode Akses / Token terlebih dahulu.</div>';
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = "Memeriksa Token...";
+            alertDiv.innerHTML = "";
+
+            const verifyUrl = `${GOOGLE_SHEETS_SCRIPT_URL}?action=verifyToken&token=${encodeURIComponent(tokenInput)}`;
+
+            fetch(verifyUrl)
+                .then(res => res.json())
+                .then(data => {
+                    btn.disabled = false;
+                    btn.textContent = "Verifikasi Token & Lanjut →";
+
+                    if (data.result === "valid") {
+                        activeToken = tokenInput;
+                        document.getElementById('tokenScreen').classList.add('hidden');
+                        document.getElementById('introScreen').classList.remove('hidden');
+                    } else if (data.result === "used") {
+                        alertDiv.innerHTML = '<div class="alert alert-error">❌ Kode Akses / Token ini sudah pernah digunakan dan tidak dapat digunakan lagi.</div>';
+                    } else {
+                        alertDiv.innerHTML = '<div class="alert alert-error">❌ Kode Akses / Token tidak valid atau tidak terdaftar!</div>';
+                    }
+                })
+                .catch(err => {
+                    btn.disabled = false;
+                    btn.textContent = "Verifikasi Token & Lanjut →";
+                    console.error("Gagal verifikasi token:", err);
+                    alertDiv.innerHTML = '<div class="alert alert-error">Terjadi kesalahan koneksi ke server. Pastikan URL Script Google sudah diisi dengan benar.</div>';
+                });
+        }
+
         function goToExampleScreen() {
             const nameInput = document.getElementById('nameInput').value.trim();
             const emailInput = document.getElementById('emailInput').value.trim();
@@ -575,7 +745,6 @@
             document.getElementById('introScreen').classList.remove('hidden');
         }
 
-        // VALIDASI CONTOH SOAL (SIMULASI PENGERJAKAN)
         function checkSampleValidity() {
             const mChecked = document.querySelector('input[name="sample_m"]:checked');
             const lChecked = document.querySelector('input[name="sample_l"]:checked');
@@ -599,11 +768,11 @@
             }
         }
 
-        // MEMULAI TES SESUNGGUHNYA (DENGAN TIMER 7 MENIT)
         function startAssessment() {
             document.getElementById('exampleScreen').classList.add('hidden');
             document.getElementById('assessment').classList.remove('hidden');
 
+            testStarted = true; // Aktifkan Mode Pengawasan Tes
             runTimer();
             renderQuestion();
         }
@@ -614,7 +783,6 @@
                 totalTimeSeconds--;
                 updateTimerDisplay();
 
-                // Peringatan saat sisa waktu 1 menit (60 detik)
                 if (totalTimeSeconds <= 60) {
                     document.getElementById('timerContainer').classList.add('warning');
                 }
@@ -723,6 +891,7 @@
         }
 
         function submitAssessment() {
+            testStarted = false; // Matikan Mode Pengawasan Tes
             if (timerInterval) clearInterval(timerInterval);
 
             scores = { D: 0, I: 0, S: 0, C: 0 };
@@ -737,19 +906,44 @@
             const primaryType = Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
 
             const results = {
+                token: activeToken,
                 candidate: candidateData,
                 scores: scores,
                 primaryType: primaryType,
                 completedAt: new Date().toISOString()
             };
 
+            // 1. Kirim Email Notifikasi ke HR
             sendEmailToHR(results);
+
+            // 2. Simpan Data ke Google Sheets dan Update Status Token ke 'Used'
+            sendDataToGoogleSheets(results);
+
+            // 3. Tampilkan Halaman Selesai
             showCompletionScreen();
+        }
+
+        function sendDataToGoogleSheets(results) {
+            fetch(GOOGLE_SHEETS_SCRIPT_URL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(results)
+            })
+            .then(() => {
+                console.log("✅ Data dan Update Token berhasil terkirim ke Google Sheets!");
+            })
+            .catch((error) => {
+                console.error("❌ Gagal mengirim data ke Google Sheets:", error);
+            });
         }
 
         function sendEmailToHR(results) {
             const templateParams = {
                 to_email: HR_EMAIL,
+                token: results.token,
                 candidate_name: results.candidate.name,
                 candidate_email: results.candidate.email,
                 primary_type: results.primaryType,
@@ -784,6 +978,7 @@
                 ["HASIL TES DISC ASSESSMENT - ALBÉA INDONESIA"],
                 [],
                 ["INFORMASI KANDIDAT"],
+                ["Kode Akses / Token", activeToken],
                 ["Nama Lengkap", candidateData.name],
                 ["Email", candidateData.email],
                 ["No HP / Whatsapp", candidateData.nohp],
