@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DISC Assessment Test - ALBÉA INDONESIA</title>
-    <!-- Include EmailJS SDK untuk Pengiriman Email Otomatis ke HR -->
+    <!-- EmailJS SDK -->
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-    <!-- Include SheetJS (XLSX) untuk Fitur Export Excel -->
+    <!-- SheetJS (XLSX) -->
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script type="text/javascript">
         (function() {
@@ -18,7 +18,6 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            /* 1. Mencegah Seleksi Teks/Kalimat di Seluruh Halaman */
             -webkit-user-select: none;
             -moz-user-select: none;
             -ms-user-select: none;
@@ -39,7 +38,7 @@
             background: white;
             border-radius: 15px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            max-width: 900px;
+            max-width: 950px;
             width: 100%;
             overflow: hidden;
             position: relative;
@@ -141,7 +140,6 @@
             font-size: 1em;
             background-color: white;
             transition: border-color 0.3s;
-            /* Mengizinkan input teks bisa diketik tanpa mengganggu seleksi global */
             -webkit-user-select: text;
             -moz-user-select: text;
             -ms-user-select: text;
@@ -208,14 +206,8 @@
         }
 
         @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .question-number {
@@ -275,7 +267,7 @@
         }
 
         button {
-            padding: 12px 30px;
+            padding: 12px 25px;
             font-size: 1em;
             border: none;
             border-radius: 8px;
@@ -298,16 +290,25 @@
         .btn-download {
             background: #2e7d32;
             color: white;
-            margin-top: 20px;
-            padding: 12px 25px;
+            margin: 10px 5px;
+            padding: 12px 20px;
             display: inline-flex;
             align-items: center;
             gap: 8px;
         }
 
-        .btn-download:hover {
-            background: #1b5e20;
+        .btn-download-pdf {
+            background: #c62828;
+            color: white;
+            margin: 10px 5px;
+            padding: 12px 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
         }
+
+        .btn-download:hover { background: #1b5e20; }
+        .btn-download-pdf:hover { background: #8e0000; }
 
         .btn-next:disabled, .btn-submit:disabled, .btn-ready:disabled, button:disabled {
             opacity: 0.5;
@@ -317,7 +318,7 @@
         .result-container {
             display: none;
             text-align: center;
-            padding: 30px 10px;
+            padding: 20px 10px;
         }
 
         .result-container.active {
@@ -327,24 +328,81 @@
 
         .disc-description {
             background: #f5f5f5;
-            padding: 25px;
+            padding: 20px;
             border-radius: 10px;
             margin: 20px 0;
             text-align: left;
         }
 
-        .hidden {
-            display: none !important;
+        /* REPORT SUMMARY STYLES */
+        .report-section {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: left;
         }
 
-        /* BANNER SHIELD JIKA SCREENSHOT TERDETEKSI */
+        .report-title {
+            font-size: 1.2em;
+            font-weight: 700;
+            color: #3730a3;
+            margin-bottom: 12px;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 6px;
+        }
+
+        .summary-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .summary-table th, .summary-table td {
+            border: 1px solid #cbd5e1;
+            padding: 8px 12px;
+            text-align: center;
+            font-size: 0.95em;
+        }
+
+        .summary-table th {
+            background: #f1f5f9;
+            color: #1e293b;
+            font-weight: 700;
+        }
+
+        .charts-grid {
+            display: flex;
+            gap: 15px;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .chart-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 15px;
+            width: 30%;
+            min-width: 250px;
+            text-align: center;
+        }
+
+        .chart-card h4 {
+            font-size: 1em;
+            color: #475569;
+            margin-bottom: 10px;
+        }
+
+        .hidden { display: none !important; }
+
         #screenshotShield {
             display: none;
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
             background: #000000;
             color: #ffffff;
             z-index: 99999;
@@ -355,10 +413,28 @@
             text-align: center;
             padding: 20px;
         }
+
+        /* PRINT STYLING UNTUK EXPORT PDF */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .container {
+                box-shadow: none;
+                max-width: 100%;
+            }
+            .button-group, #downloadContainer, .timer-container, .progress-bar, #screenshotShield {
+                display: none !important;
+            }
+            .report-section {
+                border: 1px solid #ccc;
+                page-break-inside: avoid;
+            }
+        }
     </style>
 </head>
 <body oncontextmenu="return false;">
-    <!-- SHIELD UNTUK MENCEGAH SCREENSHOT VIA PRTSCN -->
     <div id="screenshotShield">
         ⚠️ DILARANG MELAKUKAN SCREENSHOT SESAAT TES BERLANGSUNG!
     </div>
@@ -370,7 +446,7 @@
         </div>
 
         <div class="content">
-            <!-- TAHAP 0: Halaman Akses Token -->
+            <!-- TAHAP 0: Token -->
             <div id="tokenScreen">
                 <div class="disc-description">
                     <h3>VERIFIKASI KODE AKSES / TOKEN TES</h3>
@@ -390,7 +466,7 @@
                 </div>
             </div>
 
-            <!-- TAHAP 1: Form Identitas Kandidat -->
+            <!-- TAHAP 1: Form Identitas -->
             <div id="introScreen" class="intro-screen hidden">
                 <div class="disc-description">
                     <h3>SELAMAT DATANG DI DISC ASSESSMENT</h3>
@@ -433,7 +509,7 @@
                 </div>
             </div>
 
-            <!-- TAHAP 2: Halaman Contoh Soal & Panduan Pengerjaan -->
+            <!-- TAHAP 2: Contoh Soal -->
             <div id="exampleScreen" class="example-screen hidden">
                 <div class="guide-box">
                     <h3>📋 PANDUAN CARA MENGERJAKAN TES:</h3>
@@ -507,7 +583,7 @@
                 </div>
             </div>
 
-            <!-- TAHAP 3: Halaman Soal DISC Utama -->
+            <!-- TAHAP 3: Soal DISC Utama -->
             <div id="assessment" class="assessment-container hidden">
                 <div class="timer-container" id="timerContainer">
                     <span>⏱️ Sisa Waktu Pengerjaan:</span>
@@ -531,18 +607,88 @@
                 </div>
             </div>
 
-            <!-- TAHAP 4: Halaman Hasil / Konfirmasi Selesai -->
+            <!-- TAHAP 4: Hasil & Report DISC Lengkap -->
             <div id="results" class="result-container">
-                <div style="font-size: 4em; color: #2e7d32; margin-bottom: 10px;">✅</div>
-                <h2 style="margin-bottom: 15px; color: #333;">Tes DISC Telah Selesai!</h2>
-                <div class="disc-description" style="text-align: center;">
-                    <p><strong>Terima kasih telah menyelesaikan tes DISC Assessment.</strong></p>
-                    <p>Jawaban Anda telah tersimpan dan terkirim secara langsung ke email Tim HR untuk dievaluasi. Hasil bersifat rahasia dan hanya dapat diakses oleh tim Rekrutmen.</p>
+                <div style="font-size: 3.5em; color: #2e7d32; margin-bottom: 5px;">✅</div>
+                <h2 style="margin-bottom: 15px; color: #333;">Tes DISC Assessment Selesai</h2>
+
+                <!-- Ringkasan Profil Kandidat -->
+                <div class="report-section">
+                    <div class="report-title">👤 Informasi Kandidat</div>
+                    <p><strong>Nama Lengkap:</strong> <span id="resName">-</span></p>
+                    <p><strong>Email:</strong> <span id="resEmail">-</span></p>
+                    <p><strong>Posisi Dilamar:</strong> <span id="resPosisi">-</span></p>
+                    <p><strong>Tanggal Selesai:</strong> <span id="resDate">-</span></p>
                 </div>
 
-                <div id="downloadContainer" class="hidden">
+                <!-- TANYA SCORE & PERHITUNGAN MOST, LEAST, CHANGE -->
+                <div class="report-section">
+                    <div class="report-title">📊 Perhitungan Skor DISC (Most, Least, & Change)</div>
+                    <table class="summary-table">
+                        <thead>
+                            <tr>
+                                <th>Kategori</th>
+                                <th>Dominance (D)</th>
+                                <th>Influence (I)</th>
+                                <th>Steadiness (S)</th>
+                                <th>Compliance (C)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>MOST (Mask / Public)</strong></td>
+                                <td id="m_d">0</td>
+                                <td id="m_i">0</td>
+                                <td id="m_s">0</td>
+                                <td id="m_c">0</td>
+                            </tr>
+                            <tr>
+                                <td><strong>LEAST (Core / Private)</strong></td>
+                                <td id="l_d">0</td>
+                                <td id="l_i">0</td>
+                                <td id="l_s">0</td>
+                                <td id="l_c">0</td>
+                            </tr>
+                            <tr>
+                                <td><strong>CHANGE / DIFF (Mirror / Integrated)</strong></td>
+                                <td id="c_d">0</td>
+                                <td id="c_i">0</td>
+                                <td id="c_s">0</td>
+                                <td id="c_c">0</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- GRAFIK DISC (Mask, Core, Mirror) -->
+                <div class="report-section">
+                    <div class="report-title">📈 Profil Grafik DISC</div>
+                    <div class="charts-grid">
+                        <div class="chart-card">
+                            <h4>Graphic 1: Mask (Public Self)</h4>
+                            <div id="chartMask"></div>
+                            <p style="font-size:0.85em; color:#64748b; margin-top:5px;">Perilaku di tempat kerja / adaptasi lingkungan</p>
+                        </div>
+                        <div class="chart-card">
+                            <h4>Graphic 2: Core (Private Self)</h4>
+                            <div id="chartCore"></div>
+                            <p style="font-size:0.85em; color:#64748b; margin-top:5px;">Perilaku asli di bawah tekanan / naluri dasar</p>
+                        </div>
+                        <div class="chart-card">
+                            <h4>Graphic 3: Mirror (Integrated Self)</h4>
+                            <div id="chartMirror"></div>
+                            <p style="font-size:0.85em; color:#64748b; margin-top:5px;">Persepsi diri gabungan / kondisi nyata</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DOWLOAD BUTTONS -->
+                <div id="downloadContainer" style="margin-top:25px;">
                     <button class="btn-download" onclick="downloadExcelResult()">
-                        📊 Download Hasil Tes (Excel)
+                        📊 Unduh Laporan Excel
+                    </button>
+                    <button class="btn-download-pdf" onclick="downloadPDFResult()">
+                        📄 Unduh Laporan PDF
                     </button>
                 </div>
             </div>
@@ -550,17 +696,13 @@
     </div>
 
     <script>
-        // =========================================================================
-        // SETTING KONFIGURASI MODUL
-        // =========================================================================
         const HR_EMAIL = "fiscall.aditama@albea-group.com";
-        const GOOGLE_SHEETS_SCRIPT_URL = "PASANG_URL_WEB_APP_GOOGLE_SCRIPT_DI_SINI"; // Tempelkan URL Web App dari Google Script
+        const GOOGLE_SHEETS_SCRIPT_URL = "PASANG_URL_WEB_APP_GOOGLE_SCRIPT_DI_SINI";
         const ENABLE_EXCEL_DOWNLOAD = true; 
-        const MAX_TAB_SWITCH_ALLOWED = 3; // Batas maksimal pindah tab sebelum otomatis submitted
+        const MAX_TAB_SWITCH_ALLOWED = 3; 
 
-        // 🟢 SAKELAR BYPASS VALIDASI TOKEN (Ubah ke false jika ingin mengaktifkan kembali validasi token di production)
+        // SAKELAR BYPASS TOKEN UNTUK TESTING
         const BYPASS_TOKEN_VALIDATION = true; 
-        // =========================================================================
 
         const questions = [
             { id: 1, options: [{ text: "Mudah bergaul, ramah", type: "I" }, { text: "Penuh kepercayaan, Percaya kepada orang lain", type: "S" }, { text: "Petualang, mengambil resiko", type: "D" }, { text: "Toleran, Penuh hormat", type: "C" }] },
@@ -591,140 +733,61 @@
 
         let currentQuestion = 0;
         let answers = {};
-        let scores = { D: 0, I: 0, S: 0, C: 0 };
+        let mostScores = { D: 0, I: 0, S: 0, C: 0 };
+        let leastScores = { D: 0, I: 0, S: 0, C: 0 };
+        let changeScores = { D: 0, I: 0, S: 0, C: 0 };
+
         let candidateData = {};
         let activeToken = "";
-
         let totalTimeSeconds = 7 * 60;
         let timerInterval = null;
         let tabSwitchCount = 0;
         let testStarted = false;
 
-        // =========================================================================
-        // IMPLEMENTASI FITUR SECURITY & ANTI-CHEATING
-        // =========================================================================
-
-        // 1. MEMBLOKIR KLIK KANAN DARI SELURUH HALAMAN
-        document.addEventListener('contextmenu', function(e) {
-            e.preventDefault();
-            return false;
+        // PROTEKSI ANTI CHEATING
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        ['copy', 'cut', 'paste', 'selectstart', 'dragstart'].forEach(evt => {
+            document.addEventListener(evt, e => e.preventDefault());
         });
 
-        // 2. MEMBLOKIR COPY, CUT, PASTE, DAN DRAG SELEKSI TEKS
-        ['copy', 'cut', 'paste', 'selectstart', 'dragstart'].forEach(function(evt) {
-            document.addEventListener(evt, function(e) {
-                e.preventDefault();
-                return false;
-            });
-        });
-
-        // 3. MEMBLOKIR TOMBOL KEYBOARD SHORTCUT (PrintScreen, F12, Ctrl+Shift+I, Ctrl+C, Ctrl+V, dll)
         document.addEventListener('keydown', function(e) {
-            // Blokir F12, Ctrl+U (Inspect Element)
-            if (e.keyCode === 123 || (e.ctrlKey && e.keyCode === 85)) {
-                e.preventDefault();
-                return false;
-            }
-            // Blokir Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+Shift+C (DevTools)
-            if (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) {
-                e.preventDefault();
-                return false;
-            }
-            // Blokir Ctrl+C, Ctrl+V, Ctrl+X, Ctrl+A, Ctrl+S, Ctrl+P
-            if (e.ctrlKey && (e.keyCode === 67 || e.keyCode === 86 || e.keyCode === 88 || e.keyCode === 65 || e.keyCode === 83 || e.keyCode === 80)) {
-                e.preventDefault();
-                return false;
-            }
-            // Blokir PrintScreen
+            if (e.keyCode === 123 || (e.ctrlKey && e.keyCode === 85)) e.preventDefault();
+            if (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) e.preventDefault();
+            if (e.ctrlKey && (e.keyCode === 67 || e.keyCode === 86 || e.keyCode === 88 || e.keyCode === 65 || e.keyCode === 83 || e.keyCode === 80)) e.preventDefault();
             if (e.key === 'PrintScreen' || e.keyCode === 44) {
                 e.preventDefault();
                 triggerScreenshotShield();
-                return false;
             }
         });
 
-        // Sembunyikan konten layar jika tombol PrintScreen ditekan
         function triggerScreenshotShield() {
             const shield = document.getElementById('screenshotShield');
             shield.style.display = 'flex';
-            setTimeout(() => {
-                shield.style.display = 'none';
-            }, 3000);
+            setTimeout(() => { shield.style.display = 'none'; }, 3000);
         }
 
-        // 4. DETEKSI PINDAH TAB / APPLIKASI BROWSER DENGAN SANKSI BERINGKAT
         document.addEventListener('visibilitychange', function() {
-            if (document.hidden && testStarted) {
-                handleTabSwitch();
-            }
-        });
-
-        window.addEventListener('blur', function() {
-            if (testStarted) {
-                handleTabSwitch();
-            }
+            if (document.hidden && testStarted) handleTabSwitch();
         });
 
         function handleTabSwitch() {
             tabSwitchCount++;
             if (tabSwitchCount < MAX_TAB_SWITCH_ALLOWED) {
-                alert(`⚠️ PERINGATAN REKRUTMEN (${tabSwitchCount}/${MAX_TAB_SWITCH_ALLOWED})!\n\nAnda terdeteksi meninggalkan halaman/tab tes. Dilarang berpindah tab atau membuka aplikasi lain selama tes berlangsung!\n\nJika mencapai ${MAX_TAB_SWITCH_ALLOWED} kali, tes akan dihentikan secara otomatis.`);
+                alert(`⚠️ PERINGATAN REKRUTMEN (${tabSwitchCount}/${MAX_TAB_SWITCH_ALLOWED})!\nAnda terdeteksi meninggalkan halaman/tab tes.`);
             } else {
-                alert(`❌ PELANGGARAN BATAS MAKSIMAL!\n\nAnda telah berpindah tab sebanyak ${tabSwitchCount} kali. Tes dihentikan secara otomatis dan jawaban Anda akan langsung dikumpulkan.`);
+                alert(`❌ PELANGGARAN BATAS MAKSIMAL!\nTes dihentikan secara otomatis.`);
                 submitAssessment();
             }
         }
 
-        // =========================================================================
-        // LOGIKA PENGERJAKAN TES DISC
-        // =========================================================================
-
         function verifyToken() {
             const tokenInput = document.getElementById('tokenInput').value.trim();
-            const alertDiv = document.getElementById('tokenAlert');
-            const btn = document.getElementById('verifyTokenBtn');
-
-            // 🟢 JIKA MODE BYPASS AKTIF (TESTING MODE), LANGSUNG PINTAS KE DATA DIRI
             if (BYPASS_TOKEN_VALIDATION) {
                 activeToken = tokenInput || "TEST-TOKEN-BYPASS";
                 document.getElementById('tokenScreen').classList.add('hidden');
                 document.getElementById('introScreen').classList.remove('hidden');
                 return;
             }
-
-            if (!tokenInput) {
-                alertDiv.innerHTML = '<div class="alert alert-error">Harap masukkan Kode Akses / Token terlebih dahulu.</div>';
-                return;
-            }
-
-            btn.disabled = true;
-            btn.textContent = "Memeriksa Token...";
-            alertDiv.innerHTML = "";
-
-            const verifyUrl = `${GOOGLE_SHEETS_SCRIPT_URL}?action=verifyToken&token=${encodeURIComponent(tokenInput)}`;
-
-            fetch(verifyUrl)
-                .then(res => res.json())
-                .then(data => {
-                    btn.disabled = false;
-                    btn.textContent = "Verifikasi Token & Lanjut →";
-
-                    if (data.result === "valid") {
-                        activeToken = tokenInput;
-                        document.getElementById('tokenScreen').classList.add('hidden');
-                        document.getElementById('introScreen').classList.remove('hidden');
-                    } else if (data.result === "used") {
-                        alertDiv.innerHTML = '<div class="alert alert-error">❌ Kode Akses / Token ini sudah pernah digunakan dan tidak dapat digunakan lagi.</div>';
-                    } else {
-                        alertDiv.innerHTML = '<div class="alert alert-error">❌ Kode Akses / Token tidak valid atau tidak terdaftar!</div>';
-                    }
-                })
-                .catch(err => {
-                    btn.disabled = false;
-                    btn.textContent = "Verifikasi Token & Lanjut →";
-                    console.error("Gagal verifikasi token:", err);
-                    alertDiv.innerHTML = '<div class="alert alert-error">Terjadi kesalahan koneksi ke server. Pastikan URL Script Google sudah diisi dengan benar.</div>';
-                });
         }
 
         function goToExampleScreen() {
@@ -733,21 +796,13 @@
             const nohpInput = document.getElementById('nohpInput').value.trim();
             const posisiInput = document.getElementById('posisiInput').value.trim();
             const jeniskelaminSelect = document.getElementById('jeniskelaminInput').value;
-            const alertDiv = document.getElementById('formAlert');
 
             if (!nameInput || !emailInput || !nohpInput || !posisiInput || !jeniskelaminSelect) {
-                alertDiv.innerHTML = '<div class="alert alert-error">Harap lengkapi seluruh data diri Anda dan pilih Jenis Kelamin terlebih dahulu.</div>';
+                document.getElementById('formAlert').innerHTML = '<div class="alert alert-error">Harap lengkapi seluruh data diri Anda.</div>';
                 return;
             }
 
-            candidateData = {
-                name: nameInput,
-                email: emailInput,
-                nohp: nohpInput,
-                posisi: posisiInput,
-                jeniskelamin: jeniskelaminSelect
-            };
-
+            candidateData = { name: nameInput, email: emailInput, nohp: nohpInput, posisi: posisiInput, jeniskelamin: jeniskelaminSelect };
             document.getElementById('introScreen').classList.add('hidden');
             document.getElementById('exampleScreen').classList.remove('hidden');
         }
@@ -766,16 +821,14 @@
             if (mChecked && lChecked) {
                 if (mChecked.value === lChecked.value) {
                     feedback.style.color = "#dc2626";
-                    feedback.textContent = "❌ Pilihan M dan L tidak boleh berada pada baris yang sama. Silakan ubah salah satu.";
+                    feedback.textContent = "❌ Pilihan M dan L tidak boleh berada pada baris yang sama.";
                     readyBtn.disabled = true;
                 } else {
                     feedback.style.color = "#16a34a";
-                    feedback.textContent = "✅ Pilihan contoh Anda sudah benar! Anda telah memahami cara kerja tes ini.";
+                    feedback.textContent = "✅ Pilihan contoh Anda sudah benar!";
                     readyBtn.disabled = false;
                 }
             } else {
-                feedback.style.color = "#dc2626";
-                feedback.textContent = "Silakan pilih 1 opsi pada M dan 1 opsi pada L untuk mencoba contoh soal.";
                 readyBtn.disabled = true;
             }
         }
@@ -783,8 +836,7 @@
         function startAssessment() {
             document.getElementById('exampleScreen').classList.add('hidden');
             document.getElementById('assessment').classList.remove('hidden');
-
-            testStarted = true; // Aktifkan Mode Pengawasan Tes
+            testStarted = true;
             runTimer();
             renderQuestion();
         }
@@ -794,25 +846,19 @@
             timerInterval = setInterval(() => {
                 totalTimeSeconds--;
                 updateTimerDisplay();
-
-                if (totalTimeSeconds <= 60) {
-                    document.getElementById('timerContainer').classList.add('warning');
-                }
-
+                if (totalTimeSeconds <= 60) document.getElementById('timerContainer').classList.add('warning');
                 if (totalTimeSeconds <= 0) {
                     clearInterval(timerInterval);
-                    alert("Waktu 7 menit Anda telah habis. Sistem akan mengumpulkan jawaban Anda secara otomatis.");
+                    alert("Waktu habis! Jawaban Anda dikumpulkan.");
                     submitAssessment();
                 }
             }, 1000);
         }
 
         function updateTimerDisplay() {
-            const minutes = Math.floor(totalTimeSeconds / 60);
-            const seconds = totalTimeSeconds % 60;
-            const formattedMinutes = String(minutes).padStart(2, '0');
-            const formattedSeconds = String(seconds).padStart(2, '0');
-            document.getElementById('timeDisplay').textContent = `${formattedMinutes}:${formattedSeconds}`;
+            const m = String(Math.floor(totalTimeSeconds / 60)).padStart(2, '0');
+            const s = String(totalTimeSeconds % 60).padStart(2, '0');
+            document.getElementById('timeDisplay').textContent = `${m}:${s}`;
         }
 
         function renderQuestion() {
@@ -849,7 +895,6 @@
             });
 
             html += `</tbody></table></div>`;
-
             document.getElementById('questionsWrapper').innerHTML = html;
 
             const progress = ((currentQuestion + 1) / questions.length) * 100;
@@ -866,12 +911,12 @@
             if (!answers[questionId]) answers[questionId] = {};
 
             if (type === 'most' && answers[questionId].least === discType) {
-                alert("Pilihan Paling Sesuai (M) dan Kurang Sesuai (L) tidak boleh pada kalimat yang sama.");
+                alert("Pilihan Most dan Least tidak boleh sama.");
                 renderQuestion();
                 return;
             }
             if (type === 'least' && answers[questionId].most === discType) {
-                alert("Pilihan Paling Sesuai (M) dan Kurang Sesuai (L) tidak boleh pada kalimat yang sama.");
+                alert("Pilihan Most dan Least tidak boleh sama.");
                 renderQuestion();
                 return;
             }
@@ -890,7 +935,6 @@
             if (currentQuestion < questions.length - 1) {
                 currentQuestion++;
                 renderQuestion();
-                document.querySelector('.question-container').scrollIntoView({ behavior: 'smooth' });
             }
         }
 
@@ -898,96 +942,122 @@
             if (currentQuestion > 0) {
                 currentQuestion--;
                 renderQuestion();
-                document.querySelector('.question-container').scrollIntoView({ behavior: 'smooth' });
             }
         }
 
-        function submitAssessment() {
-            testStarted = false; // Matikan Mode Pengawasan Tes
-            if (timerInterval) clearInterval(timerInterval);
+        // AKUMULASI SKOR LENGKAP & HITUNG CHANGE/DIFFERENCE
+        function calculateFullScores() {
+            mostScores = { D: 0, I: 0, S: 0, C: 0 };
+            leastScores = { D: 0, I: 0, S: 0, C: 0 };
+            changeScores = { D: 0, I: 0, S: 0, C: 0 };
 
-            scores = { D: 0, I: 0, S: 0, C: 0 };
-
-            questions.forEach((q) => {
+            questions.forEach(q => {
                 const ans = answers[q.id];
-                if (ans && ans.most) {
-                    scores[ans.most]++;
+                if (ans) {
+                    if (ans.most) mostScores[ans.most]++;
+                    if (ans.least) leastScores[ans.least]++;
                 }
             });
 
-            const primaryType = Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
-
-            const results = {
-                token: activeToken,
-                candidate: candidateData,
-                scores: scores,
-                primaryType: primaryType,
-                completedAt: new Date().toISOString()
-            };
-
-            // 1. Kirim Email Notifikasi ke HR
-            sendEmailToHR(results);
-
-            // 2. Simpan Data ke Google Sheets dan Update Status Token ke 'Used'
-            sendDataToGoogleSheets(results);
-
-            // 3. Tampilkan Halaman Selesai
-            showCompletionScreen();
-        }
-
-        function sendDataToGoogleSheets(results) {
-            fetch(GOOGLE_SHEETS_SCRIPT_URL, {
-                method: "POST",
-                mode: "no-cors",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(results)
-            })
-            .then(() => {
-                console.log("✅ Data dan Update Token berhasil terkirim ke Google Sheets!");
-            })
-            .catch((error) => {
-                console.error("❌ Gagal mengirim data ke Google Sheets:", error);
+            ['D', 'I', 'S', 'C'].forEach(type => {
+                changeScores[type] = mostScores[type] - leastScores[type];
             });
         }
 
-        function sendEmailToHR(results) {
-            const templateParams = {
-                to_email: HR_EMAIL,
-                token: results.token,
-                candidate_name: results.candidate.name,
-                candidate_email: results.candidate.email,
-                primary_type: results.primaryType,
-                score_d: results.scores.D,
-                score_i: results.scores.I,
-                score_s: results.scores.S,
-                score_c: results.scores.C,
-                completed_at: new Date(results.completedAt).toLocaleString('id-ID')
-            };
+        function submitAssessment() {
+            testStarted = false;
+            if (timerInterval) clearInterval(timerInterval);
 
-            if (typeof emailjs !== 'undefined') {
-                emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', templateParams)
-                    .then(function(response) {
-                        console.log('BERHASIL! Laporan terkirim ke HR:', response.status, response.text);
-                    }, function(error) {
-                        console.log('GAGAL mengirim email...', error);
-                    });
-            }
+            calculateFullScores();
+            displayResultsUI();
+            showCompletionScreen();
+        }
+
+        function displayResultsUI() {
+            document.getElementById('resName').textContent = candidateData.name || "-";
+            document.getElementById('resEmail').textContent = candidateData.email || "-";
+            document.getElementById('resPosisi').textContent = candidateData.posisi || "-";
+            document.getElementById('resDate').textContent = new Date().toLocaleString('id-ID');
+
+            // Render Skor
+            ['d', 'i', 's', 'c'].forEach(k => {
+                const upper = k.toUpperCase();
+                document.getElementById(`m_${k}`).textContent = mostScores[upper];
+                document.getElementById(`l_${k}`).textContent = leastScores[upper];
+                document.getElementById(`c_${k}`).textContent = changeScores[upper];
+            });
+
+            // Render Graphic SVG Charts
+            renderDISCChart('chartMask', mostScores, 24, '#667eea');
+            renderDISCChart('chartCore', leastScores, 24, '#e11d48');
+            renderDISCChart('chartMirror', changeScores, 24, '#059669', true);
+        }
+
+        // GENERATOR SVG CHARTS DISC
+        function renderDISCChart(containerId, data, maxVal, lineColor, isDifference = false) {
+            const width = 200;
+            const height = 180;
+            const padding = 30;
+            
+            const categories = ['D', 'I', 'S', 'C'];
+            const points = [];
+
+            categories.forEach((cat, idx) => {
+                const x = padding + (idx * ((width - 2 * padding) / 3));
+                let val = data[cat];
+                let y;
+                
+                if (isDifference) {
+                    // Difference range: -24 to +24
+                    const norm = (val + 24) / 48; // Normalisasi 0 sampai 1
+                    y = (height - padding) - (norm * (height - 2 * padding));
+                } else {
+                    // Standard range: 0 to 24
+                    const norm = val / maxVal;
+                    y = (height - padding) - (norm * (height - 2 * padding));
+                }
+                points.push({ x, y, val });
+            });
+
+            let pathD = points.reduce((acc, pt, i) => i === 0 ? `M ${pt.x} ${pt.y}` : `${acc} L ${pt.x} ${pt.y}`, '');
+
+            let svgHtml = `
+                <svg width="${width}" height="${height}" style="background:#fff; border-radius:6px; border:1px solid #cbd5e1;">
+                    <!-- Axis grid -->
+                    <line x1="${padding}" y1="${padding}" x2="${padding}" y2="${height-padding}" stroke="#e2e8f0" stroke-width="2"/>
+                    <line x1="${padding}" y1="${height/2}" x2="${width-padding}" y2="${height/2}" stroke="#cbd5e1" stroke-dasharray="3,3"/>
+                    
+                    <!-- Line path -->
+                    <path d="${pathD}" fill="none" stroke="${lineColor}" stroke-width="3"/>
+            `;
+
+            // Draw Dots & Labels
+            points.forEach((pt, i) => {
+                svgHtml += `
+                    <circle cx="${pt.x}" cy="${pt.y}" r="5" fill="${lineColor}"/>
+                    <text x="${pt.x}" y="${height - 10}" font-size="12" font-weight="bold" text-anchor="middle" fill="#334155">${categories[i]}</text>
+                    <text x="${pt.x}" y="${pt.y - 8}" font-size="10" font-weight="bold" text-anchor="middle" fill="${lineColor}">${pt.val}</text>
+                `;
+            });
+
+            svgHtml += `</svg>`;
+            document.getElementById(containerId).innerHTML = svgHtml;
         }
 
         function showCompletionScreen() {
             document.getElementById('assessment').classList.add('hidden');
             document.getElementById('results').classList.add('active');
-
-            if (ENABLE_EXCEL_DOWNLOAD) {
-                document.getElementById('downloadContainer').classList.remove('hidden');
-            }
         }
 
+        // UNDUH PDF MENGGUNAKAN WINDOW.PRINT
+        function downloadPDFResult() {
+            window.print();
+        }
+
+        // UNDUH EXCEL LENGKAP BERSAMA SKOR MOST, LEAST, CHANGE & DETAIL SOAL
         function downloadExcelResult() {
             const dataToExport = [
-                ["HASIL TES DISC ASSESSMENT - ALBÉA INDONESIA"],
+                ["HASIL LENGKAP DISC ASSESSMENT - ALBÉA INDONESIA"],
                 [],
                 ["INFORMASI KANDIDAT"],
                 ["Kode Akses / Token", activeToken],
@@ -998,15 +1068,14 @@
                 ["Jenis Kelamin", candidateData.jeniskelamin],
                 ["Waktu Selesai", new Date().toLocaleString('id-ID')],
                 [],
-                ["RINGKASAN SKOR DISC (MOST)"],
-                ["Dominance (D)", scores.D],
-                ["Influence (I)", scores.I],
-                ["Steadiness (S)", scores.S],
-                ["Compliance (C)", scores.C],
-                ["Tipe Kepribadian Utama", scores.primaryType],
+                ["PERHITUNGAN TIPE SKOR DISC"],
+                ["Tipe Profil", "Dominance (D)", "Influence (I)", "Steadiness (S)", "Compliance (C)"],
+                ["Graphic 1: MOST (Mask / Public)", mostScores.D, mostScores.I, mostScores.S, mostScores.C],
+                ["Graphic 2: LEAST (Core / Private)", leastScores.D, leastScores.I, leastScores.S, leastScores.C],
+                ["Graphic 3: CHANGE (Mirror / Integrated)", changeScores.D, changeScores.I, changeScores.S, changeScores.C],
                 [],
-                ["RINCIAN JAWABAN PER SOAL"],
-                ["Kotak Soal", "Pilihan M (Most)", "Pilihan L (Least)"]
+                ["RINCIAN JAWABAN KANDIDAT PER KOTAK SOAL"],
+                ["Kotak Soal", "Jawaban MOST (M)", "Jawaban LEAST (L)"]
             ];
 
             questions.forEach((q) => {
@@ -1016,20 +1085,13 @@
             });
 
             const ws = XLSX.utils.aoa_to_sheet(dataToExport);
-            
-            ws['!cols'] = [
-                { wch: 25 },
-                { wch: 35 },
-                { wch: 20 }
-            ];
+            ws['!cols'] = [{ wch: 35 }, { wch: 25 }, { wch: 20 }, { wch: 20 }, { wch: 20 }];
 
             const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Hasil DISC");
+            XLSX.utils.book_append_sheet(wb, ws, "Laporan DISC");
 
             const sanitizedName = candidateData.name.replace(/[^a-zA-Z0-9]/g, "_");
-            const filename = `Hasil_DISC_${sanitizedName}.xlsx`;
-
-            XLSX.writeFile(wb, filename);
+            XLSX.writeFile(wb, `Laporan_DISC_Lengkap_${sanitizedName}.xlsx`);
         }
     </script>
 </body>
